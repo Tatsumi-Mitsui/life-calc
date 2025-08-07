@@ -17,7 +17,7 @@ import com.example.demo.service.CalcService;
 public class LifeCalcController {
 	
 	@Autowired
-	private CalcService calcService;	// ServiceクラスをDI
+	private CalcService calcService;	// CalcServiceクラスに対して依存するオブジェクトを外部から注入
 	
 	public LifeCalcController(CalcService calcService) {
 		this.calcService = calcService;

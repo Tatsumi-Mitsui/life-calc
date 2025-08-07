@@ -30,7 +30,7 @@ java -jar build/libs/life-calc-0.0.1-SNAPSHOT.jar
 http://localhost:8080/variableBudget
 
 ## 公開URL
-
+https://life-calc.onrender.com/variableBudget
 
 ## 今後の展望
 - フロント＆バックのバリデーション強化（数値チェック等）
