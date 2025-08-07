@@ -1,0 +1,207 @@
+@charset "UTF-8";
+
+/* 基本レイアウト */
+body {
+	font-family:"Hiragino Maru Gothic ProN", "ヒラギノ丸ゴ ProN W4", "Meiryo", "Yu Gothic UI", sans-serif;
+	font-size: 16px;
+	color: #333;
+	background-color: #f9f9f9;
+	margin: 0;
+	padding: 0;
+}
+
+/* ヘッダー */
+header {
+	height: 60px;
+	background-color: #14B73D;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.logo {
+	font-size: 20px;
+	font-weight: bold;
+	color: #fff;
+	text-decoration: none;
+}
+
+/* メイン */
+.container {
+	max-width: 600px;
+	margin: 20px auto;
+	padding:  12px 20px 20px 20px;
+	text-align: center;
+}
+
+/* タイトル */
+.container h2 {
+	margin-top: 12px;
+	margin-bottom: 8px;
+}
+
+/* 説明文 */
+.description {
+	margin-top: 0;
+	margin-bottom: 36px; /* formとの間を広めに */
+	font-size: 0.95rem;
+	color: #555;
+}
+
+/* フォーム全体 */
+form {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+/* 入力ブロック */
+.input-block {
+	width: 100%;
+	max-width: 400px;
+	text-align: left;
+	margin-bottom: 20px;
+}
+
+.input-block label {
+	display: inline-block;
+	min-width: 90px;
+	margin-right: 12px;
+	margin-bottom: 6px;
+}
+
+/* ￥と入力欄の横並び */
+.input-row {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+/* ￥マークの位置 */
+.input-row span {
+	display: inline-block;
+	width: 24px;
+	text-align: right;
+	font-weight: bold;
+	padding-left: 4px;
+	padding-right: 4px;
+}
+
+/* 入力欄 */
+.input-row input[type="text"] {
+	flex: 1;
+	padding: 6px;
+	font-size: 1rem;
+	box-sizing: border-box;
+}
+
+.input-row input::placeholder {
+	color: #aaa;
+	font-style: italic;
+}
+
+/* ボタン共通エリア */
+.form-buttons {
+	text-align: center;
+	margin: 12px 0 24px 0;
+}
+
+.add-button-wrapper {
+	display: flex;
+	justify-content: flex-start;	/* 左寄せ */
+	text-align: left;
+	width: 100%;
+	max-width: 400px;
+	margin: 12px auto 16px auto;
+}
+
+/* 追加ボタン */
+.add-btn {
+	background: none;
+	border: none;
+	font-size: 1.5rem;
+	color: #00aaff;
+	cursor: pointer;
+}
+
+/* 削除ボタン */
+.delete-btn {
+	background: none;
+	border: none;
+	color: #ff4d4d;
+	font-size: 1.5rem;
+	cursor: pointer;
+}
+
+/* 計算ボタン */
+.submit-btn {
+	padding: 8px 24px;
+	font-size: 1rem;
+	background-color: #14b73d;
+	color: #fff;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	transition: background-color 0.2s
+}
+
+.submit-btn:hover {
+	background-color: #09571d;
+}
+
+/* 結果表示 */
+.result-area {
+	border: 1px solid #aaa;
+	padding: 24px 16px 32px 16px;
+	margin-top: 20px;
+	text-align: left;
+	max-width: 360px;
+	margin-left: auto;
+	margin-right: auto;
+	border-radius: 8px;
+	background: #fff;
+}
+
+.result-area h3 {
+	margin-top: 0; /* 最上部の余白なし */
+	margin-bottom: 12px; /* 「使える変動費は」 との間隔（1 or 0.8） */ 
+}
+
+.result-area p {
+	margin-top: 0;
+	margin-bottom: 12px; /* 次の行との間隔 */
+}
+
+/* 金額だけ右にずらす */
+.result-area p.amount {
+	margin-top: 0;
+	margin-bottom: 0; /* 一番下に余白を作らない */
+	display: flex;
+	align-items: baseline;
+	gap: 8px; /* 「￥」 と数値の間をあける */
+	margin-left: 40px; /* 右にずらすための補正 */
+	font-size: 1.4rem;
+	font-weight: bold;
+}
+
+/* フッター */
+footer {
+	height: 40px;
+	line-height: 1rem;
+	background-color: #14b73d;
+	color: #fff;
+	text-align: center;
+	padding: 16px;
+	font-size: 0.9rem;
+}
+
+/* モバイル対応（オプション） */
+@media screen and (max-width: 480px){
+	.container {
+		padding: 12px;
+	}
+	
+	.input-row input[type="text"] {
+		width: 100%;
+	}
+}

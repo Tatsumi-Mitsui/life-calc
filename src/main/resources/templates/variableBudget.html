@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>かんたん家計計算</title>
+	<link rel="stylesheet" th:href="@{/css/style.css}">
+	<script src="https://kit.fontawesome.com/3ab9590540.js" crossorigin="anonymous"></script>
+	<script th:src="@{/js/form-control.js}" defer></script>
+</head>
+<body>
+	<!-- 上部ヘッダー：タイトルリンク -->
+	<header>
+		<a th:href="@{/variableBudget}" class="logo">かんたん家計計算</a>
+	</header>
+	
+	<!-- メイン -->
+	<main>
+		<section class="container">
+				<h2>変動費予算</h2>
+				<p class="description">収入（手取り）と固定費の合計額の差により、変動費の予算の目安を算出します。</p>
+	
+			<!-- フォーム本体 -->
+			<form th:action="@{/variableBudget/calc}" method="post" th:object="${form}">
+		
+				<!-- 収入欄 -->
+				<div class="input-block">
+					<label>収入：</label>
+					<div class="input-row">
+						<span>￥</span>
+						<input type="text" th:field="*{income}" placeholder="例：100000" />
+					</div>
+				</div>
+				
+				<!-- 固定費リスト -->
+				<div th:each="cost, stat : *{fixedCosts}" class="input-block fixed-cost-block">
+					
+					<!-- ラベル（上段） -->
+					<label th:text="'固定費' + ${stat.index + 1} + '：'"></label>
+					
+					<!-- 下段：￥と入力欄を横並び -->
+					<div class="input-row">
+						<span>￥</span>
+						<input type="text" th:field="*{fixedCosts[__${stat.index}__]}" name="fixedCosts[__${stat.index}__]" placeholder="例：10000" />
+						
+						<!-- 削除ボタン（2件目以降のみ表示） -->
+						<button type="button" th:if="${stat.index > 0}" onclick="removeCost(this)" class="delete-btn">
+							<i class="fa-solid fa-circle-minus icon-minus"></i>
+						</button>
+					</div>
+				</div>
+				
+				<!-- 追加ボタン -->
+				<div class="add-button-wrapper">
+					<button type="button" onclick="addCost()" class="add-btn">
+						<i class="fa-solid fa-circle-plus icon-plus"></i>
+					</button>
+				</div>
+			
+				<!-- 計算ボタン -->
+				<div class="form-buttons">
+					<button type="submit" class="submit-btn">計算する</button>
+				</div>
+			</form>
+			
+			<!-- 結果表示 -->
+			<div class="result-area">
+				<h3>計算結果</h3>
+				<p>使える変動費は</p>
+				<p class="amount">￥<span th:if="${form.resultVariable != null}" th:text="${#numbers.formatInteger(form.resultVariable, 0, 'COMMA')}">0</span></p>
+			</div>
+		</section>
+	</main>
+	
+	<!-- フッター -->
+	<footer>
+		<p>Copyright&copy; かんたん家計計算 All Rights Reserved.</p>
+	</footer>
+	
+</body>
+</html>
