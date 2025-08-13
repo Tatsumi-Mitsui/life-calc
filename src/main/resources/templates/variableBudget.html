@@ -86,6 +86,13 @@
 				<div class="form-buttons">
 					<button type="submit" class="submit-btn">計算する</button>
 				</div>
+				
+				<!-- 保存ボタン（計算結果があるときだけ表示） -->
+				<div class="form-buttons" th:if="${form.resultVariable != null}">
+					<form th action="@{/variableBudget/save}" method="post" th:object="${form}">
+						<button type="submit" class="save-btn">保存する</button>
+					</form>
+				</div>
 			</form>
 			
 			<!-- 結果表示 -->

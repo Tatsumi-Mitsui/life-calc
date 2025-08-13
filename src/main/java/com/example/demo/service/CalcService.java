@@ -1,15 +1,45 @@
 package com.example.demo.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.example.demo.entity.CalculationHistory;
 import com.example.demo.model.CostVariable;
+import com.example.demo.repository.CalculationHistoryRepository;
 
 @Service
 public class CalcService {
+	
+	private final CalculationHistoryRepository historyRepository;
+	
+	public CalcService(CalculationHistoryRepository historyRepository) {
+		this.historyRepository = historyRepository;
+	}
+	
+	// 保存メソッド（保存ボタンで呼び出す想定）
+	public void saveHistory(int income, List<Integer> fixedCosts, int result) {
+		String fixedCostsStr = fixedCosts.stream()
+				.map(String::valueOf)
+				.collect(Collectors.joining(","));
+		
+		CalculationHistory history = new CalculationHistory(
+				income,
+				fixedCostsStr,
+				result,
+				LocalDateTime.now()
+				);
+		
+		historyRepository.save(history);
+	}
+	
+	// その他履歴取得（表示用）
+	public List<CalculationHistory> getRecentHistory() {
+		return historyRepository.findTop10ByOrderByCreatedAtDesc();
+	}
 	
 	public void calcVariable(CostVariable form) {
 		// fixedCosts を正規化：null→0、負の数は0、0は残す
