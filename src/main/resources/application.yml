@@ -1,0 +1,36 @@
+spring:
+    profiles:
+        default: dev
+
+---
+spring:
+    config:
+        activate:
+            on-profile: dev
+    datasource:
+        url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+        username: ${DB_USER}
+        password: ${DB_PASSWORD}
+        driver-class-name: org.postgresql.Driver
+    jpa:
+        hibernate:
+            ddl-auto: update
+        properties:
+            'hibernate.dialect': org.hibernate.dialect.PostgreSQLDialect
+    flyway:
+        enabled: false
+
+---
+spring:
+    config:
+        activate:
+            on-profile: prod
+    datasource:
+        url: jdbc:postgresql://${DB_HOST_PROD}:${DB_PORT_PROD}/${DB_NAME}?sslmode=require
+        username: ${DB_USER}
+        password: ${DB_PASSWORD}
+    jpa:
+        hibernate:
+            ddl-auto: validate
+    flyway: 
+      enabled: false

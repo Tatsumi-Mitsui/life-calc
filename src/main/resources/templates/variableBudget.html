@@ -25,29 +25,54 @@
 		
 				<!-- 収入欄 -->
 				<div class="input-block">
-					<label>収入：</label>
+					<label for="income">収入：</label>
 					<div class="input-row">
 						<span>￥</span>
-						<input type="text" th:field="*{income}" placeholder="例：100000" />
+						<input
+							id="income"
+							type="number"
+							inputmode="numeric"
+							pattern="\d*"
+							min="0"
+							step="1"
+							th:field="*{income}"
+							placeholder="例：100000" />
 					</div>
+					
+					<!-- サーバー側バリデーションの表示領域（次ステップで有効化） -->
+					<div class="field-error" th:errors="*{income}"></div>
 				</div>
 				
 				<!-- 固定費リスト -->
 				<div th:each="cost, stat : *{fixedCosts}" class="input-block fixed-cost-block">
 					
 					<!-- ラベル（上段） -->
-					<label th:text="'固定費' + ${stat.index + 1} + '：'"></label>
+					<label
+						th:attr="for=${'fixedCost' + stat.index}" 
+						th:text="'固定費' + ${stat.index + 1} + '：'"></label>
 					
 					<!-- 下段：￥と入力欄を横並び -->
 					<div class="input-row">
 						<span>￥</span>
-						<input type="text" th:field="*{fixedCosts[__${stat.index}__]}" name="fixedCosts[__${stat.index}__]" placeholder="例：10000" />
+						<input
+							th:attr="id=${'fixedCost' + stat.index}"
+							type="number"
+							inputmode="numeric"
+							pattern="\d*"
+							min="0"
+							step="1"
+							th:field="*{fixedCosts[__${stat.index}__]}"
+							name="fixedCosts[__${stat.index}__]"
+							placeholder="例：10000" />
 						
 						<!-- 削除ボタン（2件目以降のみ表示） -->
 						<button type="button" th:if="${stat.index > 0}" onclick="removeCost(this)" class="delete-btn">
 							<i class="fa-solid fa-circle-minus icon-minus"></i>
 						</button>
 					</div>
+					
+					<!-- サーバー側バリデーションの表示領域 -->
+					<div class="field-error" th:errors="*{fixedCosts[__${stat.index}__]}"></div>
 				</div>
 				
 				<!-- 追加ボタン -->
@@ -67,7 +92,11 @@
 			<div class="result-area">
 				<h3>計算結果</h3>
 				<p>使える変動費は</p>
-				<p class="amount">￥<span th:if="${form.resultVariable != null}" th:text="${#numbers.formatInteger(form.resultVariable, 0, 'COMMA')}">0</span></p>
+				<p	class="amount"
+					th:classappend="${form.resultVariable != null and form.resultVariable < 0} ? 'negative'">
+					<span th:if="${form.resultVariable != null and form.resultVariable < 0}">-</span>
+					￥<span	th:if="${form.resultVariable != null}"
+				 			th:text="${#numbers.formatInteger(T(java.lang.Math).abs(form.resultVariable), 0, 'COMMA')}">0</span></p>
 			</div>
 		</section>
 	</main>

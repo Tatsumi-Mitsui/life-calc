@@ -88,16 +88,37 @@ form {
 }
 
 /* 入力欄 */
-.input-row input[type="text"] {
+.input-row input[type="text"],
+.input-row input[type="number"] {
 	flex: 1;
 	padding: 6px;
 	font-size: 1rem;
 	box-sizing: border-box;
 }
 
-.input-row input::placeholder {
+/* プレースホルダーの色 */
+.input-row input[type="text"]::placeholder,
+.input-row input[type="number"]::placeholder {
 	color: #aaa;
 	font-style: italic;
+}
+
+/* number の上下ボタンを消す（Chrome/Edge/Safari） */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+input[type=number] {
+	-moz-appearance: textfield;
+	appearance: textfield;
+}
+
+.field-error {
+	color: #d90429;
+	font-size: 0.9rem;
+	margin-top: 6px;
 }
 
 /* ボタン共通エリア */
@@ -184,6 +205,10 @@ form {
 	font-weight: bold;
 }
 
+.result-area p.amount.negative {
+	color: red;
+}
+
 /* フッター */
 footer {
 	height: 40px;
@@ -201,7 +226,8 @@ footer {
 		padding: 12px;
 	}
 	
-	.input-row input[type="text"] {
+	.input-row input[type="text"],
+	.input-row input[type="number"] {
 		width: 100%;
 	}
 }
