@@ -2,8 +2,8 @@ package com.example.demo.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -23,13 +23,17 @@ public class CalcService {
 	
 	// 保存メソッド（保存ボタンで呼び出す想定）
 	public void saveHistory(int income, List<Integer> fixedCosts, int result) {
-		String fixedCostsStr = fixedCosts.stream()
-				.map(String::valueOf)
+		int fixedTotal = sumListSafe(fixedCosts);
+		String fixedCostsStr = (fixedCosts == null) ? "" :
+			fixedCosts.stream()
+				.filter(Objects::nonNull)
+				.map(v -> String.valueOf(Math.max(0, v)))
 				.collect(Collectors.joining(","));
 		
 		CalculationHistory h = new CalculationHistory(
 					income,
 					fixedCostsStr,
+					fixedTotal,
 					result,
 					LocalDateTime.now()
 				);
@@ -37,63 +41,20 @@ public class CalcService {
 		historyRepository.save(h);
 	}
 
-	// 画面用DTO
-	public static class HistoryItem {
-		private final Long id;
-		private final LocalDateTime createdAt;
-		private final int income;
-		private final int fixedCostTotal;
-		private final int resultVariable;
-
-		public HistoryItem(Long id, LocalDateTime createdAt, int income, int fixedCostTotal, int resultVariable) {
-			this.id = id;
-			this.createdAt = createdAt;
-			this.income = income;
-			this.fixedCostTotal = fixedCostTotal;
-			this.resultVariable = resultVariable;
-		}
-		
-		public Long getId() {
-			return id;
-		}
-		public LocalDateTime getCreatedAt() {
-			return createdAt;
-		}
-		public int getIncome() {
-			return income;
-		}
-		public int getFixedCostTotal() {
-			return fixedCostTotal;
-		}
-		public int getResultVariable() {
-			return resultVariable;
-		}
+	// 直近5件（画面向け）
+	public List<CalculationHistory> getRecentHistory5() {
+		return historyRepository.findTop5ByOrderByCreatedAtDesc();
 	}
 	
-	// その他履歴取得（表示用）
-	public List<HistoryItem> getRecentHistory5() {
-		return historyRepository.findTop5ByOrderByCreatedAtDesc()
-				.stream()
-				.map(h -> new HistoryItem(
-					h.getId(),
-					h.getCreatedAt(),
-					h.getIncome(),
-					sumFixedCosts(h.getFixedCosts()),
-					h.getResultVariable()
-				))
-				.toList();
-	}
-
-	private int sumFixedCosts(String fixedCostsCsv) {
-		if (fixedCostsCsv == null || fixedCostsCsv.isBlank()) return 0;
-		return Arrays.stream(fixedCostsCsv.split(","))
-				.map(String::trim)
-				.filter(s -> !s.isEmpty())
-				.mapToInt(Integer::parseInt)
-				.map(v -> Math.max(0,v)) // 念のため負数ガード
+	private int sumListSafe(List<Integer> list) {
+		if (list == null) return 0;
+		return list.stream()
+				.filter(Objects::nonNull)
+				.mapToInt(v -> Math.max(0, v))
 				.sum();
 	}
 	
+
 	public void calcVariable(CostVariable form) {
 		// fixedCosts を正規化：null→0、負の数は0、0は残す
 		List<Integer> source = form.getFixedCosts();	// getter側がnullなら空リストを返す前提でも安全に

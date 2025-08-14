@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 
 @Repository
-public interface CalculationHistoryRepository extends JpaRepository<CalculationHistory,Long> {
+public interface CalculationHistoryRepository extends JpaRepository<CalculationHistory, Long> {
 	
 	// 直近10件を取得（作成日時の降順）
 	List<CalculationHistory> findTop5ByOrderByCreatedAtDesc();

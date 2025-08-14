@@ -114,7 +114,7 @@
 				<!-- 履歴なし -->
 				<p th:if="${#lists.isEmpty(recentHistory)}" class="no-history">履歴がありません</p>
 				
-				<!-- 履歴あり：カードを5件まで -->
+				<!-- 履歴あり：最大5件まで -->
 				 <div th:each="h : ${recentHistory}" class="history-card">
 					<p>
 						<span class="label">保存日：</span>

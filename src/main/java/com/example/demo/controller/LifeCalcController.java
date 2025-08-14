@@ -9,10 +9,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import com.example.demo.entity.CalculationHistory;
 import com.example.demo.model.CostVariable;
 import com.example.demo.service.CalcService;
-import com.example.demo.service.CalcService.HistoryItem;
-
 import jakarta.validation.Valid;
 
 @Controller
@@ -31,9 +30,8 @@ public class LifeCalcController {
 		model.addAttribute("form", new CostVariable());
 
 		// 履歴を取得してModelに渡す
-		List<HistoryItem> recentHistory = calcService.getRecentHistory5();
-		model.addAttribute("recentHistory", recentHistory);
-		
+		List<CalculationHistory> recent = calcService.getRecentHistory5();
+		model.addAttribute("recentHistory", recent);
 		return "variableBudget";
 	}
 	
@@ -51,18 +49,18 @@ public class LifeCalcController {
 		}
 		
 		calcService.calcVariable(form);	// Serviceで計算処理
-		model.addAttribute("form", form);
+		model.addAttribute("recentHistory", calcService.getRecentHistory5());
 		return "variableBudget";
 	}
 	
 	// 保存処理（POST）
 	@PostMapping("/variableBudget/save")
 	public String saveVariable(@ModelAttribute("form") CostVariable form) {
-		// 入力値（収入・固定費・結果） をServiceに渡す
+		// 計算後のみ押せる想定（resultVariable が null の場合はガードしても良い）
 		calcService.saveHistory(
-				form.getIncome(),
-				form.getFixedCosts(),
-				form.getResultVariable()
+				form.getIncome() == null ? 0 : form.getIncome(),
+				form.getFixedCosts(), // JSで空欄除去済みだがnullガードはservice側で
+				form.getResultVariable() == null ? 0 : form.getResultVariable()
 		);
 		
 		// 保存後は元の画面にリダイレクト（メッセージ表示などは必要に応じて）
