@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "caluculationhistory")
+@Table(name = "calculation_history")
 public class CalculationHistory {
 
     @Id
@@ -28,15 +28,19 @@ public class CalculationHistory {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+    }
+
     // コンストラクタ
     public CalculationHistory() {}
 
-    public CalculationHistory(int income, String fixedCosts,int fixedCostTotal, int resultVariable, LocalDateTime createdAt) {
+    public CalculationHistory(Integer income, String fixedCosts,Integer fixedCostTotal, Integer resultVariable) {
         this.income = income;
         this.fixedCosts = fixedCosts;
         this.fixedCostTotal = fixedCostTotal;
         this.resultVariable = resultVariable;
-        this.createdAt = createdAt;
     }
 
     // Getter/Setter

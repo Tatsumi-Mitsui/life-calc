@@ -1,6 +1,5 @@
 package com.example.demo.service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -34,8 +33,7 @@ public class CalcService {
 					income,
 					fixedCostsStr,
 					fixedTotal,
-					result,
-					LocalDateTime.now()
+					result
 				);
 		
 		historyRepository.save(h);
