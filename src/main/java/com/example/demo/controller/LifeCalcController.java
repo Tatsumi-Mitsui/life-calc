@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import com.example.demo.entity.CalculationHistory;
 import com.example.demo.model.CostVariable;
 import com.example.demo.service.CalcService;
+import com.example.demo.service.CalcService.HistoryItem;
 
 import jakarta.validation.Valid;
 
@@ -31,7 +31,7 @@ public class LifeCalcController {
 		model.addAttribute("form", new CostVariable());
 
 		// 履歴を取得してModelに渡す
-		List<CalculationHistory> recentHistory = calcService.getRecentHistory();
+		List<HistoryItem> recentHistory = calcService.getRecentHistory5();
 		model.addAttribute("recentHistory", recentHistory);
 		
 		return "variableBudget";
@@ -57,7 +57,7 @@ public class LifeCalcController {
 	
 	// 保存処理（POST）
 	@PostMapping("/variableBudget/save")
-	public String saveHistory(@ModelAttribute("form") CostVariable form) {
+	public String saveVariable(@ModelAttribute("form") CostVariable form) {
 		// 入力値（収入・固定費・結果） をServiceに渡す
 		calcService.saveHistory(
 				form.getIncome(),

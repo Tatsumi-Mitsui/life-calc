@@ -105,6 +105,50 @@
 					￥<span	th:if="${form.resultVariable != null}"
 				 			th:text="${#numbers.formatInteger(T(java.lang.Math).abs(form.resultVariable), 0, 'COMMA')}">0</span></p>
 			</div>
+
+			<!-- 履歴表示（右側） -->
+			<section id="history-section">
+				<h2>履歴</h2>
+				<div class="csv-export-placeholder"><!-- あとでCSVボタンを置く --></div>
+
+				<!-- 履歴なし -->
+				<p th:if="${#lists.isEmpty(recentHistory)}" class="no-history">履歴がありません</p>
+				
+				<!-- 履歴あり：カードを5件まで -->
+				 <div th:each="h : ${recentHistory}" class="history-card">
+					<p>
+						<span class="label">保存日：</span>
+						<span class="value"
+							th:text="${#temporals.format(h.createdAt, 'yyyy年MM月dd日 HH:mm')}">2025年08月14日 10:00</span>
+					</p>
+
+					<p>
+						<span class="label">収入：</span>
+						<span class="value">
+							￥<span th:text="${#numbers.formatInteger(h.income, 0, 'COMMA')}">200,000</span>
+						</span>
+					</p>
+
+					<p>
+						<span class="label">固定費合計：</span>
+						<span class="value">
+							￥<span th:text="${#numbers.formatInteger(h.fixedCostTotal, 0, 'COMMA')}">125,000</span>
+						</span>
+					</p>
+
+					<p>
+						<span class="label">計算結果：</span>
+						<span class="value result"
+								th:classappend="${h.resultVariable} < 0 ? 'negative' : 'positive'">
+							￥<span th:text="${#numbers.formatInteger(h.resultVariable, 0, 'COMMA')}">75,000</span>
+						</span>
+					</p>
+
+					<div class="details-button">
+						<a th:href="@{/history/{id}(id=${h.id})}">＋詳細</a>
+					</div>
+				 </div>
+			</section>
 		</section>
 	</main>
 	

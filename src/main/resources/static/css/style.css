@@ -209,6 +209,75 @@ input[type=number] {
 	color: red;
 }
 
+/* 履歴表示 */
+#history-section {
+	width: 100%;
+	max-width: 360px;
+	margin-left: auto;
+}
+
+.csv-export-placeholder {
+	height: 40px;
+	margin-bottom: 12px;
+}
+
+.no-history {
+	color: #666;
+	font-size: 14px;
+	margin: 8px 0 16px;
+}
+
+.history-card {
+	border: 1px solid #ccc;
+	border-radius: 8px;
+	padding: 12px 16px;
+	margin-bottom: 16px;
+	position: relative;
+	background: #fff;
+}
+
+.history-card.label {
+	display: inline-block;
+	min-width: 90px;
+}
+
+.history-card.value {
+	float: right;
+	text-align: right;
+}
+
+.history-card::after {
+	content: "";
+	display: block;
+	clear: both;
+}
+
+.result.negative {
+	color: red;
+	font-weight: bold;
+}
+
+.result.positive {
+	color: #007acc;
+	font-weight: bold;
+}
+
+.details-button {
+	position: absolute;
+	bottom: 8px;
+	right: 12px;
+}
+
+.details-button a {
+	color: #007acc;
+	text-decoration: none;
+	font-size: 0.9rem;
+}
+
+.details-button a:hover {
+	text-decoration: underline;
+}
+
 /* フッター */
 footer {
 	height: 40px;

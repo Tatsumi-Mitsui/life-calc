@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,19 +27,71 @@ public class CalcService {
 				.map(String::valueOf)
 				.collect(Collectors.joining(","));
 		
-		CalculationHistory history = new CalculationHistory(
-				income,
-				fixedCostsStr,
-				result,
-				LocalDateTime.now()
+		CalculationHistory h = new CalculationHistory(
+					income,
+					fixedCostsStr,
+					result,
+					LocalDateTime.now()
 				);
 		
-		historyRepository.save(history);
+		historyRepository.save(h);
+	}
+
+	// 画面用DTO
+	public static class HistoryItem {
+		private final Long id;
+		private final LocalDateTime createdAt;
+		private final int income;
+		private final int fixedCostTotal;
+		private final int resultVariable;
+
+		public HistoryItem(Long id, LocalDateTime createdAt, int income, int fixedCostTotal, int resultVariable) {
+			this.id = id;
+			this.createdAt = createdAt;
+			this.income = income;
+			this.fixedCostTotal = fixedCostTotal;
+			this.resultVariable = resultVariable;
+		}
+		
+		public Long getId() {
+			return id;
+		}
+		public LocalDateTime getCreatedAt() {
+			return createdAt;
+		}
+		public int getIncome() {
+			return income;
+		}
+		public int getFixedCostTotal() {
+			return fixedCostTotal;
+		}
+		public int getResultVariable() {
+			return resultVariable;
+		}
 	}
 	
 	// その他履歴取得（表示用）
-	public List<CalculationHistory> getRecentHistory() {
-		return historyRepository.findTop10ByOrderByCreatedAtDesc();
+	public List<HistoryItem> getRecentHistory5() {
+		return historyRepository.findTop5ByOrderByCreatedAtDesc()
+				.stream()
+				.map(h -> new HistoryItem(
+					h.getId(),
+					h.getCreatedAt(),
+					h.getIncome(),
+					sumFixedCosts(h.getFixedCosts()),
+					h.getResultVariable()
+				))
+				.toList();
+	}
+
+	private int sumFixedCosts(String fixedCostsCsv) {
+		if (fixedCostsCsv == null || fixedCostsCsv.isBlank()) return 0;
+		return Arrays.stream(fixedCostsCsv.split(","))
+				.map(String::trim)
+				.filter(s -> !s.isEmpty())
+				.mapToInt(Integer::parseInt)
+				.map(v -> Math.max(0,v)) // 念のため負数ガード
+				.sum();
 	}
 	
 	public void calcVariable(CostVariable form) {
