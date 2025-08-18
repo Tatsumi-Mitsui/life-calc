@@ -1,4 +1,4 @@
-package com.example.demo.entity;
+package com.example.demo.variablebudget.entity;
 
 import java.time.LocalDateTime;
 import jakarta.persistence.*;
