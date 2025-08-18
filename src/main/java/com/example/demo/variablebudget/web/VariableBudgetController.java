@@ -28,7 +28,10 @@ public class VariableBudgetController {
     // 画面で使うフォームのデフォルト（毎回必ず用意）
     @ModelAttribute("form")
     public VariableBudgetForm setupForm() {
-        return new VariableBudgetForm();
+        VariableBudgetForm f = new VariableBudgetForm();
+        // 初期表示で1行は出す
+        f.getFixedCosts().add(0);
+        return f;
     }
 
     // 初期表示：フォーム ＋ 履歴5件（右側）

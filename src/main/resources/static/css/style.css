@@ -1,99 +1,151 @@
 @charset "UTF-8";
 
 /* 基本レイアウト */
+:root {
+	--brand: #339900;	/* ヘッダーの緑 */
+	--ink: #222;
+	--muted: #666;
+	--line: #e5e5e5;
+	--bg: #fafafa;
+	--white: #fff;
+	--danger: #ff0033;
+	--positive: #0033cc;	/* 計算結果の青 */
+
+	/* フォント */
+	--font-sans-rounded: "Hiragino Maru Gothic ProN", "ヒラギノ丸ゴ ProN W4",
+						 "Hiragino Sans", "ヒラギノ角ゴ ProN W3",
+						 "Noto Sans JP", "Yu Gothic", "Yu Gothic UI",
+						 "Meiryo", "Segoe UI", Roboto,
+						 system-ui, --applesystem, BlinkMacSystemFont,
+						 "Helvetica Neue", Arial, sans-serif;
+	--font-sans-ui: system-ui, -apple-system, "Segoe UI", Roboto,
+					"Noto Sans JP", "Hiragino Sans", "Yu Gothic UI",
+					"Yu Gothic", "Meiryo", "Helvetica Neue", Arial, sans-serif;
+}
+
+*{ box-sizing: border-box; }
+html,body { height: 100%; }
 body {
-	font-family:"Hiragino Maru Gothic ProN", "ヒラギノ丸ゴ ProN W4", "Meiryo", "Yu Gothic UI", sans-serif;
-	font-size: 16px;
-	color: #333;
-	background-color: #f9f9f9;
 	margin: 0;
-	padding: 0;
+	color: var(--ink);
+	background-color: var(--bg);
+	font-family: var(--font-sans-rounded);	/* 既定フォント（丸ゴ寄り） */
+	font-size: 16px;
+	line-height: 1.6;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	text-rendering: optimizeLegibility;
+	font-kerning: normal;
+	font-variant-numeric: tabular-nums lining-nums;	/* 金額の桁揃え */
+	letter-spacing: 0.02em;
+	line-break: strict;
+	word-break: keep-all;
+	overflow-wrap: anywhere;
 }
 
-/* ヘッダー */
+/* UI寄りにする場合はHTMLに <body class="use-ui-font"> を付けるだけ */
+body .use-ui-font {
+	font-family: var(--font-sans-ui);
+}
+
+/* ヘッダー / フッター */
 header {
-	height: 60px;
-	background-color: #14B73D;
-	display: flex;
-	align-items: center;
-	justify-content: center;
+	background: var(--brand);
+	color: #fff;
+	text-align: center;
+	padding: 14px 12px;
+	margin-top: 32px;
 }
 
-.logo {
-	font-size: 20px;
-	font-weight: bold;
+header .logo {
 	color: #fff;
 	text-decoration: none;
-}
-
-/* メイン */
-.container {
-	max-width: 600px;
-	margin: 20px auto;
-	padding:  12px 20px 20px 20px;
-	text-align: center;
-}
-
-/* タイトル */
-.container h2 {
-	margin-top: 12px;
-	margin-bottom: 8px;
-}
-
-/* 説明文 */
-.description {
-	margin-top: 0;
-	margin-bottom: 36px; /* formとの間を広めに */
-	font-size: 0.95rem;
-	color: #555;
-}
-
-/* フォーム全体 */
-form {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-}
-
-/* 入力ブロック */
-.input-block {
-	width: 100%;
-	max-width: 400px;
-	text-align: left;
-	margin-bottom: 20px;
-}
-
-.input-block label {
+	font-weight: 700;
+	font-size: 20px;
 	display: inline-block;
-	min-width: 90px;
-	margin-right: 12px;
-	margin-bottom: 6px;
 }
 
-/* ￥と入力欄の横並び */
+/* フッター */
+footer {
+	background-color: var(--brand);
+	color: #fff;
+	text-align: center;
+	padding: 14px 12px;
+	margin-top: 32px;
+	font-size: 0.9rem;
+}
+
+/* タイトル等 */
+h2 {
+	margin: 20px 0 8px;
+	font-size: 22px;
+}
+
+.description {
+	color: var(--muted);
+	margin: 0 0 16px;
+}
+
+/* 2カラムレイアウト（Grid） */
+.page-grid {
+	max-width: 1000px;
+	margin: 0px auto;
+	padding:  24px 16px;
+	display: grid;
+	grid-template-columns: 5fr 2fr;	/* 左：メイン　右：履歴 */
+	gap: 24px;
+	align-items: start;
+}
+
+.main-pane, .history-pane {
+	min-width: 0;
+}
+
+@media (max-width: 900px) {
+	.page-grid {grid-template-columns: 1fr; }
+}
+
+/* フォーム共通 */
+form {
+	background: transparent;
+}
+
+.input-block {
+	margin: 14px 0;
+}
+
+.input-block > label {
+	display: block;
+	margin-bottom: 6px;
+	font-weight: 600;
+}
+
 .input-row {
-	display: flex;
+	display: flex;	/* 金額の￥と入力を横並び */
 	align-items: center;
 	gap: 8px;
 }
 
-/* ￥マークの位置 */
-.input-row span {
-	display: inline-block;
-	width: 24px;
-	text-align: right;
-	font-weight: bold;
-	padding-left: 4px;
-	padding-right: 4px;
+.input-row > span {
+	color: var(--muted);
 }
 
 /* 入力欄 */
-.input-row input[type="text"],
-.input-row input[type="number"] {
-	flex: 1;
-	padding: 6px;
-	font-size: 1rem;
-	box-sizing: border-box;
+input[type="number"],
+input[type="text"] {
+	width: 100%;
+	max-width: 420px;
+	padding: 10px 12px;
+	border-radius: 8px;
+	background: var(--white);
+	text-align: right;	/* 数字は右寄せ */
+	font-variant-numeric: tabular-nums;
+}
+
+input:focus {
+	outline: none;
+	border-color: var(--positive);
+	box-shadow: 0 0 0 3px rgba(45,108,223,0.15);
 }
 
 /* プレースホルダーの色 */
@@ -116,178 +168,192 @@ input[type=number] {
 }
 
 .field-error {
-	color: #d90429;
-	font-size: 0.9rem;
+	color: var(--danger);
+	font-size: 13px;
 	margin-top: 6px;
 }
 
-/* ボタン共通エリア */
-.form-buttons {
-	text-align: center;
-	margin: 12px 0 24px 0;
-}
-
+/* 固定費の追加・削除ボタン */
 .add-button-wrapper {
-	display: flex;
-	justify-content: flex-start;	/* 左寄せ */
-	text-align: left;
-	width: 100%;
-	max-width: 400px;
-	margin: 12px auto 16px auto;
+	margin: 10px 0;
 }
 
-/* 追加ボタン */
-.add-btn {
-	background: none;
+.add-btn, .delete-btn {
+	appearance: none;
 	border: none;
-	font-size: 1.5rem;
-	color: #00aaff;
+	background: transparent;
 	cursor: pointer;
+	line-height: 1;
+	padding: 6px;
+	border-radius: 999px;
 }
 
-/* 削除ボタン */
+.add-btn .icon-plus {
+	font-size: 28px;
+	color: #0099ff;
+}
+
+.delete-btn .icon-minus {
+	font-size: 28px;
+	color: var(--danger);
+}
+
 .delete-btn {
-	background: none;
-	border: none;
-	color: #ff4d4d;
-	font-size: 1.5rem;
-	cursor: pointer;
+	margin-left: 6px;
 }
 
-/* 計算ボタン */
-.submit-btn {
-	padding: 8px 24px;
-	font-size: 1rem;
-	background-color: #14b73d;
-	color: #fff;
+/* 実行ボタン */
+.form-buttons {
+	margin: 16px 0 0;
+	display: flex;
+	gap: 8px;
+}
+
+.submit-btn, .save-btn {
+	appearance: none;
 	border: none;
-	border-radius: 4px;
 	cursor: pointer;
-	transition: background-color 0.2s
+	border-radius: 10px;
+	padding: 10px 16px;
+	font-weight: 600;
+	box-shadow: 0 1px 0 rgba(0,0,0,0.05);
+}
+
+.submit-btn {
+	background: #66cc00;
+	color: #fff;
 }
 
 .submit-btn:hover {
-	background-color: #09571d;
+	filter: brightness(0.95);
 }
 
-/* 結果表示 */
+.save-btn {
+	background: #111827;
+	color: #fff;
+}
+
+.save-btn[disabled] {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+/* 計算結果パネル */
 .result-area {
-	border: 1px solid #aaa;
-	padding: 24px 16px 32px 16px;
-	margin-top: 20px;
-	text-align: left;
-	max-width: 360px;
-	margin-left: auto;
-	margin-right: auto;
+	border: 1px solid var(--line);
 	border-radius: 8px;
-	background: #fff;
+	padding: 16px 18px;
+	background: var(--white);
+	margin-top: 16px;
 }
 
-.result-area h3 {
-	margin-top: 0; /* 最上部の余白なし */
-	margin-bottom: 12px; /* 「使える変動費は」 との間隔（1 or 0.8） */ 
-}
-
-.result-area p {
-	margin-top: 0;
-	margin-bottom: 12px; /* 次の行との間隔 */
-}
-
-/* 金額だけ右にずらす */
-.result-area p.amount {
-	margin-top: 0;
-	margin-bottom: 0; /* 一番下に余白を作らない */
+.result-area .row {
 	display: flex;
+	align-items: baseline;	/* ベースライン合わせで￥沈み対策 */
+	justify-content: space-between;
+	gap: 8px;
+	padding: 4px 0;
+	line-height: 1.25;
+}
+
+.result-area .yen {
+	display: inline-block;
+	line-height: 1;	/* 疑似的に高さを合わせる */
+	vertical-align:  baseline;
+	margin-right: 4px;	/* 数字との間隔 */
+}
+
+.result-area .num {
+	text-align: right;
+	font-variant-numeric: tabular-nums;
+}
+
+.result-area .money {
+	display: inline-flex;
 	align-items: baseline;
-	gap: 8px; /* 「￥」 と数値の間をあける */
-	margin-left: 40px; /* 右にずらすための補正 */
-	font-size: 1.4rem;
-	font-weight: bold;
+	gap: 4px;
 }
 
-.result-area p.amount.negative {
-	color: red;
+.amount {
+	font-size: 28px;
+	font-weight: 700px;
+	margin: 6px 0 0 12px;
 }
 
-/* 履歴表示 */
-#history-section {
-	width: 100%;
-	max-width: 360px;
-	margin-left: auto;
+.amount.negative {
+	color: var(--danger);
 }
 
-.csv-export-placeholder {
-	height: 40px;
-	margin-bottom: 12px;
+.amount.positive {
+	color: var(--positive);
 }
 
-.no-history {
-	color: #666;
-	font-size: 14px;
-	margin: 8px 0 16px;
+/* 履歴（右カラム） */
+.history-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin: 8px 0 12px;
+}
+
+/* 後でCSV出力ボタンを置く */
+.csv-placeholder {
+	min-height: 32px;
 }
 
 .history-card {
-	border: 1px solid #ccc;
+	border:1px solid var(--line);
 	border-radius: 8px;
-	padding: 12px 16px;
-	margin-bottom: 16px;
-	position: relative;
-	background: #fff;
+	padding: 12px 14px;
+	background: var(--white);
 }
 
-.history-card.label {
-	display: inline-block;
-	min-width: 90px;
+.history-card .row {
+	display: flex;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 4px 0;
 }
 
-.history-card.value {
-	float: right;
+.history-card .row span:first-child {
+	color: var(--muted);
+}
+
+.history-card .row span:last-child {
 	text-align: right;
+	min-width: 120px;
+	font-variant-numeric: tabular-nums;
 }
 
-.history-card::after {
-	content: "";
-	display: block;
-	clear: both;
+.history-card .row .result span:last-child.pos {
+	color: var(--positive);
+	font-weight: 600;
 }
 
-.result.negative {
-	color: red;
-	font-weight: bold;
+.history-card .row .result span:last-child.neg {
+	color: var(--danger);
+	font-weight: 600;
 }
 
-.result.positive {
-	color: #007acc;
-	font-weight: bold;
-}
-
-.details-button {
-	position: absolute;
-	bottom: 8px;
-	right: 12px;
-}
-
-.details-button a {
-	color: #007acc;
+.history-card .more {
+	display: inline-block;
+	margin-top: 6px;
 	text-decoration: none;
-	font-size: 0.9rem;
+	color: #0b57d0;
+	font-weight: 600;
 }
 
-.details-button a:hover {
-	text-decoration: underline;
+.history-card .more[aria-disabled="true"] {
+	color: #9aa0a6;
+	cursor: default;
 }
 
-/* フッター */
-footer {
-	height: 40px;
-	line-height: 1rem;
-	background-color: #14b73d;
-	color: #fff;
+.history-empty {
+	color: var(--muted);
 	text-align: center;
-	padding: 16px;
-	font-size: 0.9rem;
+	padding: 8px 0;
 }
+
 
 /* モバイル対応（オプション） */
 @media screen and (max-width: 480px){

@@ -1,155 +1,166 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>かんたん家計計算</title>
+
 	<link rel="stylesheet" th:href="@{/css/style.css}">
 	<script src="https://kit.fontawesome.com/3ab9590540.js" crossorigin="anonymous"></script>
 	<script th:src="@{/js/form-control.js}" defer></script>
 </head>
+
 <body>
-	<!-- 上部ヘッダー：タイトルリンク -->
+
+	<!-- ヘッダー：タイトルリンク -->
 	<header>
 		<a th:href="@{/variableBudget}" class="logo">かんたん家計計算</a>
 	</header>
 	
 	<!-- メイン -->
 	<main>
-		<section class="container">
+		<div class="page-grid">
+
+			<!-- 中央：メイン（フォーム＋結果） -->
+			<section class="main-pane">
 				<h2>変動費予算</h2>
 				<p class="description">収入（手取り）と固定費の合計額の差により、変動費の予算の目安を算出します。</p>
 	
-			<!-- フォーム本体 -->
-			<form th:action="@{/variableBudget/calc}" method="post" th:object="${form}">
+				<!-- フォーム -->
+				<form th:action="@{/variableBudget/calc}" method="post" th:object="${form}">
 		
-				<!-- 収入欄 -->
-				<div class="input-block">
-					<label for="income">収入：</label>
-					<div class="input-row">
-						<span>￥</span>
-						<input
-							id="income"
-							type="number"
-							inputmode="numeric"
-							pattern="\d*"
-							min="0"
-							step="1"
-							th:field="*{income}"
-							placeholder="例：100000" />
+					<!-- 収入欄 -->
+					<div class="input-block">
+						<label for="income">収入：</label>
+						<div class="input-row">
+							<span>￥</span>
+							<input
+								id="income"
+								name="income"
+								type="number"
+								inputmode="numeric"
+								pattern="\\d*"
+								min="0"
+								step="1"
+								th:field="*{income}"
+								placeholder="例：100000"
+								autocomplete="off" />
+						</div>
+					
+						<!-- サーバー側バリデーションの表示領域（次ステップで有効化） -->
+						<div class="field-error" th:errors="*{income}"></div>
 					</div>
-					
-					<!-- サーバー側バリデーションの表示領域（次ステップで有効化） -->
-					<div class="field-error" th:errors="*{income}"></div>
-				</div>
 				
-				<!-- 固定費リスト -->
-				<div th:each="cost, stat : *{fixedCosts}" class="input-block fixed-cost-block">
+					<!-- 固定費リスト ※初期表示で1行出すため、コントローラの@ModelAttributeで form.fixedCosts.add(0) 済み想定 -->
+					<div th:each="cost, stat : *{fixedCosts}" class="input-block fixed-cost-block">
 					
-					<!-- ラベル（上段） -->
-					<label
-						th:attr="for=${'fixedCost' + stat.index}" 
-						th:text="'固定費' + ${stat.index + 1} + '：'"></label>
+						<!-- ラベル（上段） -->
+						<label th:text="'固定費' + ${stat.index + 1} + '：'"></label>
 					
-					<!-- 下段：￥と入力欄を横並び -->
-					<div class="input-row">
-						<span>￥</span>
-						<input
-							th:attr="id=${'fixedCost' + stat.index}"
-							type="number"
-							inputmode="numeric"
-							pattern="\d*"
-							min="0"
-							step="1"
-							th:field="*{fixedCosts[__${stat.index}__]}"
-							name="fixedCosts[__${stat.index}__]"
-							placeholder="例：10000" />
+						<!-- 下段：￥と入力欄を横並び -->
+						<div class="input-row">
+							<span>￥</span>
+							<input
+								type="number"
+								id="fixedCosts[0]"
+								inputmode="numeric"
+								min="0"
+								step="1"
+								th:field="*{fixedCosts[__${stat.index}__]}"
+								placeholder="例：10000"
+								autocomplete="off" />
 						
-						<!-- 削除ボタン（2件目以降のみ表示） -->
-						<button type="button" th:if="${stat.index > 0}" onclick="removeCost(this)" class="delete-btn">
-							<i class="fa-solid fa-circle-minus icon-minus"></i>
+							<!-- 削除ボタン（2件目以降のみ表示） -->
+							<button type="button" th:if="${stat.index > 0}" onclick="removeCost(this)" class="delete-btn">
+								<i class="fa-solid fa-circle-minus icon-minus"></i>
+							</button>
+						</div>
+					
+						<!-- サーバー側バリデーションの表示領域 -->
+						<div class="field-error" th:errors="*{fixedCosts[__${stat.index}__]}"></div>
+					</div>
+				
+					<!-- 追加ボタン -->
+					<div class="add-button-wrapper">
+						<button type="button" onclick="addCost()" class="add-btn">
+							<i class="fa-solid fa-circle-plus icon-plus"></i>
 						</button>
 					</div>
+			
+					<!-- 計算ボタン -->
+					<div class="form-buttons">
+						<button type="submit" class="submit-btn">計算する</button>
+					</div>
 					
-					<!-- サーバー側バリデーションの表示領域 -->
-					<div class="field-error" th:errors="*{fixedCosts[__${stat.index}__]}"></div>
-				</div>
-				
-				<!-- 追加ボタン -->
-				<div class="add-button-wrapper">
-					<button type="button" onclick="addCost()" class="add-btn">
-						<i class="fa-solid fa-circle-plus icon-plus"></i>
-					</button>
-				</div>
-			
-				<!-- 計算ボタン -->
-				<div class="form-buttons">
-					<button type="submit" class="submit-btn">計算する</button>
-				</div>
-				
-				<!-- 保存ボタン（計算結果があるときだけ表示） -->
-				<div class="form-buttons" th:if="${form.resultVariable != null}">
-					<form th action="@{/variableBudget/save}" method="post" th:object="${form}">
-						<button type="submit" class="save-btn">保存する</button>
-					</form>
-				</div>
-			</form>
-			
-			<!-- 結果表示 -->
-			<div class="result-area">
-				<h3>計算結果</h3>
-				<p>使える変動費は</p>
-				<p	class="amount"
-					th:classappend="${form.resultVariable != null and form.resultVariable < 0} ? 'negative'">
-					<span th:if="${form.resultVariable != null and form.resultVariable < 0}">-</span>
-					￥<span	th:if="${form.resultVariable != null}"
-				 			th:text="${#numbers.formatInteger(T(java.lang.Math).abs(form.resultVariable), 0, 'COMMA')}">0</span></p>
-			</div>
+					<!-- 保存ボタン（計算結果があるときだけ表示） -->
+					<div class="form-buttons" th:if="${form.resultVariable != null}">
+						<form th action="@{/variableBudget/save}" method="post" th:object="${form}">
+							<button type="submit" class="save-btn">保存する</button>
+						</form>
+					</div>
+					
+					<!-- 結果表示 -->
+					<div class="result-area">
+						<h3>計算結果</h3>
+						<p>固定費の合計は</p>
+						<p>￥<span th:if="${form.fixedTotal != null}"
+									th:text="${#numbers.formatInteger(form.fixedTotal, 0, 'COMMA')}">0</span>
+						</p>
+						
+						<p>使える変動費は</p>
+						<p	class="amount"
+							th:classappend="${form.resultVariable != null and form.resultVariable < 0} ? 'negative' : (${form.resultVariable} != null ? 'positive' : '')">
+							<span th:if="${form.resultVariable != null and form.resultVariable < 0}">-</span>
+							￥<span	th:if="${form.resultVariable != null}"
+									th:text="${#numbers.formatInteger(T(java.lang.Math).abs(form.resultVariable), 0, 'COMMA')}">0</span>
+						</p>
+					</div>
+				</form>
+			</section>
 
-			<!-- 履歴表示（右側） -->
-			<section id="history-section">
-				<h2>履歴</h2>
-				<div class="csv-export-placeholder"><!-- あとでCSVボタンを置く --></div>
+			<!-- 右側：履歴表示 -->
+			<aside class="history-pane">
+				<div class="history-header">
+				<h3>履歴</h3>
+				<div class="csv-placeholder"><!-- あとでCSVボタンを置く --></div>
+				</div>
 
 				<!-- 履歴なし -->
-				<p th:if="${#lists.isEmpty(recentHistory)}" class="no-history">履歴がありません</p>
+				<p th:if="${#lists.isEmpty(recentHistory)}" class="history-empty">履歴がありません</p>
 				
 				<!-- 履歴あり：最大5件まで -->
-				 <div th:each="h : ${recentHistory}" class="history-card">
-					<p>
-						<span class="label">保存日：</span>
-						<span class="value"
-							th:text="${#temporals.format(h.createdAt, 'yyyy年MM月dd日 HH:mm')}">2025年08月14日 10:00</span>
-					</p>
+				<div th:if="${!#lists.isEmpty(recentHistory)}" class="history-list">
+					<div th:each="h : ${recentHistory}" class="history-card">
+						
+						<!-- 保存日 -->
+						<div class="row">
+							<span>保存日：</span>
+							<span th:text="${#temporals.format(h.createdAt, 'yyyy年MM月dd日 HH:mm')}">2025年08月14日 10:00</span>
+						</div>
 
-					<p>
-						<span class="label">収入：</span>
-						<span class="value">
-							￥<span th:text="${#numbers.formatInteger(h.income, 0, 'COMMA')}">200,000</span>
-						</span>
-					</p>
-
-					<p>
-						<span class="label">固定費合計：</span>
-						<span class="value">
-							￥<span th:text="${#numbers.formatInteger(h.fixedCostTotal, 0, 'COMMA')}">125,000</span>
-						</span>
-					</p>
-
-					<p>
-						<span class="label">計算結果：</span>
-						<span class="value result"
-								th:classappend="${h.resultVariable} < 0 ? 'negative' : 'positive'">
-							￥<span th:text="${#numbers.formatInteger(h.resultVariable, 0, 'COMMA')}">75,000</span>
-						</span>
-					</p>
-
-					<div class="details-button">
-						<a th:href="@{/history/{id}(id=${h.id})}">＋詳細</a>
+						<!-- 収入 -->
+						<div class="row">
+							<span>収入：</span>
+							<span th:text="${'￥' + #numbers.formatInteger(h.income, 0, 'COMMA')}">￥200,000</span>
+						</div>
+					
+						<!-- 固定費合計 -->
+						<div class="row">
+							<span>固定費合計：</span>
+							<span th:text="${'￥' + #numbers.formatInteger(h.fixedCostTotal, 0, 'COMMA')}">￥125,000</span>
+						</div>
+					
+						 <!-- 計算結果 -->
+						<div class="row result">
+							<span class="label">計算結果：</span>
+							<span th:text="${'￥' + #numbers.formatInteger(T(java.lang.Math).abs(h.resultVariable), 0, 'COMMA')}"
+								th:classappend="${h.resultVariable} < 0 ? 'neg' : 'pos'">￥175,000</span>
+						</div>
+						<a class="more" href="#" aria-disabled="true">＋詳細</a>
 					</div>
 				 </div>
-			</section>
-		</section>
+			</aside>
+		</div>
 	</main>
 	
 	<!-- フッター -->
