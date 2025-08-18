@@ -35,7 +35,7 @@ public class VariableBudgetController {
     @GetMapping
     public String showVariableForm(Model model) {
         model.addAttribute("recentHistory", historyService.getRecentHistory5());
-        return "variablebuget/variableBudget";
+        return "variablebudget/variableBudget";
     }
 
     // 計算ボタン：フォームをもとに計算して再描画（保存はしない）
