@@ -1,6 +1,6 @@
 @charset "UTF-8";
 
-/* 基本レイアウト */
+/* ===== 基本レイアウト ===== */
 :root {
 	--brand: #339900;	/* ヘッダーの緑 */
 	--ink: #222;
@@ -16,7 +16,7 @@
 						 "Hiragino Sans", "ヒラギノ角ゴ ProN W3",
 						 "Noto Sans JP", "Yu Gothic", "Yu Gothic UI",
 						 "Meiryo", "Segoe UI", Roboto,
-						 system-ui, --applesystem, BlinkMacSystemFont,
+						 system-ui, -apple-system, BlinkMacSystemFont,
 						 "Helvetica Neue", Arial, sans-serif;
 	--font-sans-ui: system-ui, -apple-system, "Segoe UI", Roboto,
 					"Noto Sans JP", "Hiragino Sans", "Yu Gothic UI",
@@ -43,18 +43,19 @@ body {
 	overflow-wrap: anywhere;
 }
 
-/* UI寄りにする場合はHTMLに <body class="use-ui-font"> を付けるだけ */
+/* UI寄りにする場合： <body class="use-ui-font"> */
 body .use-ui-font {
 	font-family: var(--font-sans-ui);
 }
 
-/* ヘッダー / フッター */
+/* ===== ヘッダー / フッター ===== */
+/* ヘッダー */
 header {
 	background: var(--brand);
 	color: #fff;
 	text-align: center;
 	padding: 14px 12px;
-	margin-top: 32px;
+	margin-top: 0;		/* 余白なし */
 }
 
 header .logo {
@@ -75,7 +76,7 @@ footer {
 	font-size: 0.9rem;
 }
 
-/* タイトル等 */
+/* ===== タイトル等 ===== */
 h2 {
 	margin: 20px 0 8px;
 	font-size: 22px;
@@ -86,10 +87,10 @@ h2 {
 	margin: 0 0 16px;
 }
 
-/* 2カラムレイアウト（Grid） */
+/* ===== 2カラムレイアウト（Grid） ===== */
 .page-grid {
 	max-width: 1000px;
-	margin: 0px auto;
+	margin: 0 auto;
 	padding:  24px 16px;
 	display: grid;
 	grid-template-columns: 5fr 2fr;	/* 左：メイン　右：履歴 */
@@ -105,7 +106,7 @@ h2 {
 	.page-grid {grid-template-columns: 1fr; }
 }
 
-/* フォーム共通 */
+/* ===== フォーム共通 ===== */
 form {
 	background: transparent;
 }
@@ -136,6 +137,7 @@ input[type="text"] {
 	width: 100%;
 	max-width: 420px;
 	padding: 10px 12px;
+	border: 1px solid var(--line);
 	border-radius: 8px;
 	background: var(--white);
 	text-align: right;	/* 数字は右寄せ */
@@ -148,14 +150,13 @@ input:focus {
 	box-shadow: 0 0 0 3px rgba(45,108,223,0.15);
 }
 
-/* プレースホルダーの色 */
-.input-row input[type="text"]::placeholder,
-.input-row input[type="number"]::placeholder {
+/* プレースホルダー */
+.input-row input::placeholder {
 	color: #aaa;
 	font-style: italic;
 }
 
-/* number の上下ボタンを消す（Chrome/Edge/Safari） */
+/* number の上下ボタンを消す（Chrome/Edge/Safari/Firefox） */
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
 	-webkit-appearance: none;
@@ -167,13 +168,14 @@ input[type=number] {
 	appearance: textfield;
 }
 
+/* バリデーションメッセージ */
 .field-error {
 	color: var(--danger);
 	font-size: 13px;
 	margin-top: 6px;
 }
 
-/* 固定費の追加・削除ボタン */
+/* ===== 固定費の追加・削除ボタン ===== */
 .add-button-wrapper {
 	margin: 10px 0;
 }
@@ -202,7 +204,7 @@ input[type=number] {
 	margin-left: 6px;
 }
 
-/* 実行ボタン */
+/* ===== 実行ボタン ===== */
 .form-buttons {
 	margin: 16px 0 0;
 	display: flex;
@@ -238,7 +240,7 @@ input[type=number] {
 	cursor: not-allowed;
 }
 
-/* 計算結果パネル */
+/* ===== 計算結果パネル ===== */
 .result-area {
 	border: 1px solid var(--line);
 	border-radius: 8px;
@@ -247,48 +249,30 @@ input[type=number] {
 	margin-top: 16px;
 }
 
-.result-area .row {
-	display: flex;
-	align-items: baseline;	/* ベースライン合わせで￥沈み対策 */
-	justify-content: space-between;
-	gap: 8px;
-	padding: 4px 0;
-	line-height: 1.25;
+.result-area h3 {
+	margin: 0 0 1.5rem;	/* 見出し下：1.5em */
 }
 
-.result-area .yen {
-	display: inline-block;
-	line-height: 1;	/* 疑似的に高さを合わせる */
-	vertical-align:  baseline;
-	margin-right: 4px;	/* 数字との間隔 */
+.result-row {
+	margin: 0 0 0.8em;	/* ラベル ↔ 金額 の間は0.5～0.8emの上限寄り */
+	line-height: 1.6;
 }
 
-.result-area .num {
-	text-align: right;
-	font-variant-numeric: tabular-nums;
+.result-row .value {
+	display: block;		/* ラベルの下に金額を改行表示 */
+	padding-left: 2em;	/* 金額のインデント（全角約2文字分） */
 }
 
-.result-area .money {
-	display: inline-flex;
-	align-items: baseline;
-	gap: 4px;
-}
-
-.amount {
-	font-size: 28px;
-	font-weight: 700px;
-	margin: 6px 0 0 12px;
-}
-
-.amount.negative {
-	color: var(--danger);
-}
-
-.amount.positive {
+/* 金額の色 */
+.result-row .value.positive {
 	color: var(--positive);
 }
 
-/* 履歴（右カラム） */
+.result-row .value.negative {
+	color: var(--danger);
+}
+
+/* ===== 履歴（右カラム） ===== */
 .history-header {
 	display: flex;
 	justify-content: space-between;
@@ -299,6 +283,11 @@ input[type=number] {
 /* 後でCSV出力ボタンを置く */
 .csv-placeholder {
 	min-height: 32px;
+}
+
+.history-list {
+	display: grid;
+	gap: 12px;
 }
 
 .history-card {
@@ -325,14 +314,14 @@ input[type=number] {
 	font-variant-numeric: tabular-nums;
 }
 
-.history-card .row .result span:last-child.pos {
+/* 強調（使える変動費の行） - HTMLは.row.result */
+.history-card .row.result span:last-child {
 	color: var(--positive);
 	font-weight: 600;
 }
 
-.history-card .row .result span:last-child.neg {
+.history-card .row.result span:last-child.neg {
 	color: var(--danger);
-	font-weight: 600;
 }
 
 .history-card .more {
@@ -354,13 +343,13 @@ input[type=number] {
 	padding: 8px 0;
 }
 
+/* ===== 細かい調整 ===== */
+.icon-plus, .icon-minus {
+	vertical-align: middle;
+}
 
 /* モバイル対応（オプション） */
-@media screen and (max-width: 480px){
-	.container {
-		padding: 12px;
-	}
-	
+@media (max-width: 480px){
 	.input-row input[type="text"],
 	.input-row input[type="number"] {
 		width: 100%;
