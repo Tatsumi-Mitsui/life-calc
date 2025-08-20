@@ -1,11 +1,14 @@
 package com.example.demo.variablebudget.web.controller;
 
 import com.example.demo.variablebudget.service.HistoryAppService;
-import com.example.demo.variablebudget.service.VariableBudgetCalcService;
+import com.example.demo.variablebudget.service.CalcService;
 import com.example.demo.variablebudget.web.model.VariableBudgetForm;
+
+import jakarta.validation.Valid;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 /*
@@ -24,13 +27,13 @@ import org.springframework.web.bind.annotation.*;
  */
 
 @Controller
-@RequestMapping("/variableBudget")
+@RequestMapping("/variablebudget")
 public class VariableBudgetController {
 
-    private final VariableBudgetCalcService calcService;
+    private final CalcService calcService;
     private final HistoryAppService historyService;
 
-    public VariableBudgetController(VariableBudgetCalcService calcService,
+    public VariableBudgetController(CalcService calcService,
                                     HistoryAppService historyService) {
         this.calcService = calcService;
         this.historyService = historyService;
@@ -45,9 +48,10 @@ public class VariableBudgetController {
 
     // 計算だけ実行：保存はしない。結果を画面に反映。
     @PostMapping("/calc")
-    public String calc(@ModelAttribute("form") VariableBudgetForm form, Model model) {
-        calcService.fillTotals(form);  // 収入・固定費から「固定費合計 / 使える変動費」を算出
-        model.addAttribute("form", form);
+    public String calc(@Valid @ModelAttribute("form") VariableBudgetForm form, BindingResult br, Model model) {
+        if (!br.hasErrors()) {
+            calcService.fillTotals(form);  // 収入・固定費から「固定費合計 / 使える変動費」を算出
+        }
         model.addAttribute("histories", historyService.recentByUser(form.getUserId(), 5));
         return "variablebudget/variableBudget";
     }
@@ -57,18 +61,22 @@ public class VariableBudgetController {
      * 右の履歴は保存時にだけ更新される。（計算ボタンとは分離）
      */
     @PostMapping("/save")
-    public String save(@ModelAttribute("form") VariableBudgetForm form, Model model) {
-        historyService.saveSnapshot(form);  // 内部で再計算 → スナップショット保存
-        model.addAttribute("form", form);
+    public String save(@Valid @ModelAttribute("form") VariableBudgetForm form, BindingResult br, Model model) {
+        if (!br.hasErrors()) {
+            calcService.fillTotals(form);
+            historyService.saveSnapshot(form);  // 内部で再計算 → スナップショット保存
+        }
         model.addAttribute("histories", historyService.recentByUser(form.getUserId(),5));
         return "variablebudget/variableBudget";
     }
 
     // 個別削除：POST /variablebudget/history/delete/{id}
     @PostMapping("/history/delete/{id}")
-    public String deleteOne(@ModelAttribute("form") VariableBudgetForm form,
-                            @PathVariable Long id) {
-        historyService.deleteOne(form.getUserId(), id);
+    public String delete(@PathVariable Long id,
+                         @ModelAttribute("form") VariableBudgetForm form,
+                         Model model) {
+        historyService.deleteById(form.getUserId(), id);
+        model.addAttribute("histories", historyService.recentByUser(form.getUserId(), 5));
         return "redirect:/variablebudget";
     }
     

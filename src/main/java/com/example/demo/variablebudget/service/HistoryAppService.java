@@ -26,10 +26,10 @@ import java.util.List;
 public class HistoryAppService {
     
     private final HistoryRepository repository;
-    private final VariableBudgetCalcService calcService;
+    private final CalcService calcService;
 
     public HistoryAppService(HistoryRepository repository,
-                                VariableBudgetCalcService calcService) {
+                                CalcService calcService) {
         this.repository = repository;
         this.calcService = calcService;
     }
@@ -60,7 +60,7 @@ public class HistoryAppService {
     }
 
     // 履歴の個別削除。Controller から userId と id を受け取って repo に委譲。
-    public boolean deleteOne(Long userId, Long id) {
+    public boolean deleteById(Long userId, Long id) {
         return repository.deleteById(userId, id);
     }
 }

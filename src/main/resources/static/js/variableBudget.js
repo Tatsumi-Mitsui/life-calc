@@ -21,8 +21,8 @@
     const addBtn = $('#add-fixed');
     const saveBtn = $('#save-button');
 
-    const calcForm = $$('#calc-form');
-    const saveForm = $$('#save-form');
+    const calcForm = $('#calc-form');
+    const saveForm = $('#save-form');
 
     // ----- 行追加 -----
     function addCost() {

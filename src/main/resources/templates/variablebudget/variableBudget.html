@@ -27,7 +27,9 @@
 			<!-- 計算フォーム：/calc にPOST。 -->
 			<form id="calc-form" th:action="@{/variablebudget/calc}" method="post" th:object="${form}">
 				<!-- CSRF（ログイン済みユーザーの権限を使って勝手に操作させる攻撃）の対策用 -->
-				<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+				<th:block th:if="${_csrf != null}">
+					<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+				</th:block> 
 
 				<!-- 収入欄 -->
 				<div class="input-block">
@@ -110,7 +112,9 @@
 			<!-- 保存ボタン：/save にPOST。calcフォームの値をJSでコピーして送る -->
 			<form id="save-form" th:action="@{/variablebudget/save}" th:object="${form}" method="post" class="form-buttons">
 				<!-- CSRF（ログイン済みユーザーの権限を使って勝手に操作させる攻撃）の対策用 -->
-				<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+				<th:block th:if="${_csrf != null}">
+					<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+				</th:block>
 				<button type="button" id="save-button" class="save-btn">保存する</button>
 			</form>
 								

@@ -13,7 +13,7 @@ import java.util.Objects;
  * - null安全：nz()とfilter(Objects::nonNull)でNPE回避
  */
 @Service
-public class VariableBudgetCalcService {
+public class CalcService {
 	
 	// 入ってきた form を副作用で更新（固定費合計/使える変動費をセット）
 	public void fillTotals(VariableBudgetForm form) {
