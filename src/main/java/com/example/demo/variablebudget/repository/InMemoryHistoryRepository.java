@@ -26,6 +26,8 @@ public class InMemoryHistoryRepository implements HistoryRepository {
     // userIdごとに履歴を保持
     private final Map<Long, List<HistoryView>> store = new ConcurrentHashMap<>();
 
+    private Long uid(Long userId) { return (userId == null) ? 0L : userId; }
+
     @Override
     public Long save(HistoryView history) {
         Long id = idGenerator.incrementAndGet();
@@ -38,13 +40,15 @@ public class InMemoryHistoryRepository implements HistoryRepository {
             history.fixedCostTotal(),
             history.resultVariable()
         );
-        store.computeIfAbsent(history.userId(), k -> new ArrayList<>()).add(0, withId); // 新しいものを先頭に追加
+        Long key = uid(history.userId());       // null→0L に正規化してキーに使う
+        store.computeIfAbsent(key, k -> new ArrayList<>()).add(0, withId); // 新しいものを先頭に追加
         return id;
     }
 
     @Override
     public List<HistoryView> findRecentByUser(Long userId, int limit) {
-        return store.getOrDefault(userId, Collections.emptyList())
+        Long key = uid(userId);         // ここで正規化
+        return store.getOrDefault(key, Collections.emptyList())
                     .stream()
                     .limit(limit)
                     .toList();
@@ -52,7 +56,8 @@ public class InMemoryHistoryRepository implements HistoryRepository {
 
     @Override
     public boolean deleteById(Long userId, Long id) {
-        List<HistoryView> list = store.get(userId);
+        Long key = uid(userId);         //ここでも正規化
+        List<HistoryView> list = store.get(key);
         if (list == null) {
             return false;
         }
