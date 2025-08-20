@@ -106,7 +106,7 @@
             hidden.name = src.name;
             hidden.value = src.value;
             hidden.className = '__cloned';
-            saveForm.appendChild = (hidden);
+            saveForm.appendChild(hidden);
         });
 
         // 送信
