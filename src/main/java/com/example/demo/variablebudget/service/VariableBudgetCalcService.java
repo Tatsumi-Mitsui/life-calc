@@ -1,57 +1,36 @@
 package com.example.demo.variablebudget.service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import com.example.demo.variablebudget.web.model.VariableBudgetForm;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.variablebudget.model.VariableBudgetForm;
+import java.util.Objects;
 
+/*
+ * 計算ロジック専用サービス。Controllerや保存は触らない。
+ * - 収入と固定費リストから「固定費合計」「使える変動費」を算出して form に埋める
+ * - 画面や保存のことは一切考えない（純粋ロジックに集中）
+ * - 副作用でformに書き戻す：テンプレから参照しやすい
+ * - null安全：nz()とfilter(Objects::nonNull)でNPE回避
+ */
 @Service
 public class VariableBudgetCalcService {
 	
-	/* 
-	 *  変動費の計算を行い、フォームへ結果を反映する。
-	 *  - fixedCosts を正規化（null→0、負の数→0）
-	 *  - 入力が空なら最低1行（0）を維持（再描画で1行目が消えないように）
-	 *  - 合計（fixedCostTotal）と結果（resultVariable）をセット
-	 */
-	
-	// 変動費を計算してフォームにセット
-	public void calc(VariableBudgetForm form) {
-		// fixedCosts を正規化：null→0、負の数→0
-		List<Integer> normalized = normalizeFixedCosts(form.getFixedCosts());
-		
-		// 少なくとも1行（0）は維持
-		if (normalized.isEmpty()) {
-			normalized = new ArrayList<>(List.of(0));
-		}
+	// 入ってきた form を副作用で更新（固定費合計/使える変動費をセット）
+	public void fillTotals(VariableBudgetForm form) {
+		long income = nz(form.getIncome());
 
-		// 合計算出
-		int fixedTotal = normalized.stream().mapToInt(Integer::intValue).sum();
+		long fixedTotal = (form.getFixedCosts() == null) ? 0L
+				: form.getFixedCosts().stream()
+					.filter(Objects::nonNull)
+					.mapToLong(Long::longValue)
+					.sum();
 
-		// 収入は null を 0 扱い
-		int income = nz(form.getIncome());
-
-		// 結果セット
-		form.setFixedCosts(normalized);
 		form.setFixedCostTotal(fixedTotal);
 		form.setResultVariable(income - fixedTotal);
 	}
 
-
-	// helpers
-	// 固定費リストを正規化（null→0、負の数→0）。null リストは空扱い
-	private List <Integer> normalizeFixedCosts(List<Integer> list) {
-		if (list == null) return List.of();
-		return list.stream()
-				.map(v -> v == null ? 0 : Math.max(0, v))
-				.collect(Collectors.toList());
-	}
-
 	// null を 0 扱いするユーティリティ
-	private int nz(Integer v) {
+	private long nz(Long v) {
 		return v == null ? 0 : v;
 	}
 }

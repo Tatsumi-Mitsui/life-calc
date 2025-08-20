@@ -1,0 +1,66 @@
+package com.example.demo.variablebudget.service;
+
+import com.example.demo.variablebudget.repository.HistoryRepository;
+import com.example.demo.variablebudget.web.dto.HistoryView;
+import com.example.demo.variablebudget.web.model.VariableBudgetForm;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+/*
+ * 履歴のユースケース（画面の"保存 / 取得 / 削除"）をまとめる層。
+ * - 保存ボタン時のスナップショット保存
+ * - ユーザー別の直近履歴取得
+ * - 履歴の個別削除
+ * 
+ * 設計：
+ * - 一貫性：保存前に必ず再計算して、表示値と保存値のズレを防ぐ
+ * - 依存の向き：Controller → HistoryAppSerVice → （CalcService, Repository）
+ * - 差し替え：RepositoryはInMemory→JPAに後で置き換え可
+ * 
+ * 計算は CalcService に委譲してから保存する（値の一貫性を担保）
+ */
+
+@Service
+public class HistoryAppService {
+    
+    private final HistoryRepository repository;
+    private final VariableBudgetCalcService calcService;
+
+    public HistoryAppService(HistoryRepository repository,
+                                VariableBudgetCalcService calcService) {
+        this.repository = repository;
+        this.calcService = calcService;
+    }
+
+    // 現在の入力を再計算してから、履歴として保存。戻り値は保存ID。
+    public Long saveSnapshot(VariableBudgetForm form) {
+        // 入力から固定費合計/使える変動費を再計算して確定
+        calcService.fillTotals(form);
+
+        // リストはコピーしておく（ミュータブル参照を持たない）
+        var fixedListCopy = List.copyOf(form.getFixedCosts());
+
+        HistoryView snapshot = new HistoryView(
+                null,                           // id は repo 側で採番
+                LocalDateTime.now(),            // 保存日時
+                form.getUserId(),               // 将来ログイン導入で差し替え
+                form.getIncome(),
+                fixedListCopy,
+                form.getFixedCostTotal(),
+                form.getResultVariable()
+        );
+        return repository.save(snapshot);
+    }
+
+    // 指定ユーザーの直近履歴を取得（limit件）。未ログインはuserId=null → 0L 扱いは repo に委譲。
+    public List<HistoryView> recentByUser(Long userId, int limit) {
+        return repository.findRecentByUser(userId, limit);
+    }
+
+    // 履歴の個別削除。Controller から userId と id を受け取って repo に委譲。
+    public boolean deleteOne(Long userId, Long id) {
+        return repository.deleteById(userId, id);
+    }
+}
