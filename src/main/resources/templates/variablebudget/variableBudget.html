@@ -101,23 +101,24 @@
 					<button type="button" id="add-fixed" class="add-btn" onclick="addCost()">
 						<i class="fa-solid fa-circle-plus icon-plus"></i>
 					</button>
-				</div>
+				</div>			
+			</form>
 			
+			<!-- 共通アクション行（中央横並び）-->
+			<div class="actions">
 				<!-- 計算ボタン -->
-				<div class="form-buttons">
-					<button type="submit" class="submit-btn">計算する</button>
-				</div>
-			</form>
-					
-			<!-- 保存ボタン：/save にPOST。calcフォームの値をJSでコピーして送る -->
-			<form id="save-form" th:action="@{/variablebudget/save}" th:object="${form}" method="post" class="form-buttons">
-				<!-- CSRF（ログイン済みユーザーの権限を使って勝手に操作させる攻撃）の対策用 -->
-				<th:block th:if="${_csrf != null}">
-					<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-				</th:block>
-				<button type="button" id="save-button" class="save-btn">保存する</button>
-			</form>
-								
+				<button type="submit" class="submit-btn">計算する</button>
+
+				<!-- 保存ボタン：/save にPOST。calcフォームの値をJSでコピーして送る -->
+				<form id="save-form" th:action="@{/variablebudget/save}" th:object="${form}" method="post" class="form-buttons">
+					<!-- CSRF（ログイン済みユーザーの権限を使って勝手に操作させる攻撃）の対策用 -->
+					<th:block th:if="${_csrf != null}">
+						<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+					</th:block>
+					<button type="button" id="save-button" class="save-btn">保存する</button>
+				</form>
+			</div>
+			
 			<!-- 計算結果（順序：見出し → 固定費合計 → 使える変動費） -->
 			<div class="result-area">
 				<h3>計算結果</h3>
@@ -126,19 +127,18 @@
 				<div class="result-row">
 					<span>固定費の合計：</span>
 					<span class="value">
-						￥<span th:text="${#numbers.formatInteger((form.fixedCostTotal?:0), 0, 'COMMA')}">0</span>
+						￥<span th:text="${#numbers.formatInteger(form.fixedCostTotal != null ? form.fixedCostTotal : 0, 0, 'COMMA')}">0</span>
 					</span>
 				</div>
 					
-				<!-- 使える変動費 -->
+				<!-- 使える変動費 -->				
 				<div class="result-row">
-					<span>使える変動費：</span>
-					<span class="value"
-						  th:classappend="${form.resultVariable != null and form.resultVariable < 0} ? 'negative' : (${form.resultVariable} != null ? 'positive' : '')">
-						<span th:if="${form.resultVariable != null and form.resultVariable < 0}">-</span>
-						￥<span	th:if="${form.resultVariable != null}"
-								 th:text="${#numbers.formatInteger(T(java.lang.Math).abs(form.resultVariable), 0, 'COMMA')}">0</span>
-					</span>
+  					<span>使える変動費：</span>
+  					<span class="value"
+        				  th:classappend="${form.resultVariable != null} ? (${form.resultVariable} < 0 ? 'negative' : 'positive') : ''">
+    					<span th:if="${form.resultVariable != null and form.resultVariable < 0}">-</span>
+    					￥<span th:text="${#numbers.formatInteger(T(java.lang.Math).abs(form.resultVariable != null ? form.resultVariable : 0), 0, 'COMMA')}">0</span>
+  					</span>
 				</div>
 			</div>
 
@@ -194,29 +194,39 @@
 					<!-- 収入 -->
 					<div class="row">
 						<span>収入：</span>
-						<span class="num">￥<span th:text="${#numbers.formatInteger(h.income, 0, 'COMMA')}">200,000</span></span>
+						<span class="num">
+							￥<span th:text="${#numbers.formatInteger((h.income != null ? h.income : 0), 0, 'COMMA')}">200,000</span>
+						</span>
 					</div>
 					
 					<!-- 固定費合計 -->
 					<div class="row">
 						<span>固定費合計：</span>
-						<span class="num">￥<span th:text="${#numbers.formatInteger(h.fixedCostTotal, 0, 'COMMA')}">125,000</span></span>
+						<span class="num">
+							￥<span th:text="${#numbers.formatInteger((h.fixedCostTotal != null ? h.fixedCostTotal : 0), 0, 'COMMA')}">125,000</span>
+						</span>
 					</div>
 					
 					<!-- 計算結果 -->
 					<div class="row result">
 						<span >使える変動費：</span>
-						<span class="num">￥<span th:text="${#numbers.formatInteger(h.resultVariable, 0, 'COMMA')}">175,000</span></span>
+						<span class="num"
+							  th:classappend="${h.resultVariable != null and h.resultVariable < 0} ? 'negative' :
+							  				 (${h.resultVariable != null and h.resultVariable > 0} ? 'positive' : '')">
+							<span th:if="${h.resultVariable != null and h.resultVariable < 0}">-</span>
+							 ￥<span th:text="${#numbers.formatInteger(T(java.lang.Math).abs(h.resultVariable != null ? h.resultVariable : 0), 0, 'COMMA')}">175,000</span>
+						</span>
 					</div>
 
 					<!-- 詳細表示 -->
 					<!-- <a class="more" href="#" aria-disabled="true">＋詳細</a> -->
 					
-					<!-- 個別削除（このカードだけ消す） -->
+					<!-- 履歴カードの個別削除フォーム -->
 					<form th:action="@{/variablebudget/history/delete/{id}(id=${h.id})}" method="post" class="mt-2">
 						<!-- CSRF（ログイン済みユーザーの権限を使って勝手に操作させる攻撃）の対策用 -->
-						<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-
+						<th:block th:if="${_csrf != null}">
+							<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+						</th:block>
 						<button type="submit" class="delete-btn">削除</button>	
 					</form>
 				</div>

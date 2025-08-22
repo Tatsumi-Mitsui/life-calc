@@ -24,6 +24,20 @@
     const calcForm = $('#calc-form');
     const saveForm = $('#save-form');
 
+    // 空行削除
+    function pruneEmptyFixedCosts() {
+        const blocks = $$('.fixed-cost-block', listEl);
+        // 中間の空行を削除（最低1行は残す）
+        blocks.forEach((block, i) => {
+            const input = $('input[type="number"]', block);
+            if (!input) return;
+            const enpty = (input.value === '' || input.value == null);
+            if (enpty && blocks.length > 1) block.remove();
+        });
+
+        reindex();
+    }
+
     // ----- 行追加 -----
     function addCost() {
         const idx = $$('.fixed-cost-block', listEl).length;     // 次のインデックス
@@ -48,7 +62,7 @@
         const blocks = $$('.fixed-cost-block', listEl);
         if (blocks.length <= 1) return;                         // 1行は残す
 
-        const block = btn.closest('fixed-cost-block');
+        const block = btn.closest('.fixed-cost-block');
         if (block) block.remove();
 
         reindex();
@@ -85,6 +99,8 @@
     function handleSave() {
         if (!calcForm || !saveForm) return;
 
+        pruneEmptyFixedCosts();
+
         // 以前のコピーを削除（CSRF hiddenは残す）
         $$('.__cloned', saveForm).forEach(n => n.remove());
 
@@ -117,6 +133,12 @@
     function bindEvents() {
         if (addBtn) addBtn.addEventListener('click', addCost);
         if (saveBtn) saveBtn.addEventListener('click', handleSave);
+
+        if (calcForm) {
+            calcForm.addEventListener('submit', () => {
+                pruneEmptyFixedCosts();
+            });
+        }
 
         // 既存1行の削除ボタン表示制御（初期描画時）
         reindex();

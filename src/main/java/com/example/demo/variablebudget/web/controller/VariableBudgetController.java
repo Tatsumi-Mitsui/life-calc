@@ -72,12 +72,12 @@ public class VariableBudgetController {
 
     // 個別削除：POST /variablebudget/history/delete/{id}
     @PostMapping("/history/delete/{id}")
-    public String delete(@PathVariable Long id,
+    public String delete(@PathVariable("id") Long id,
                          @ModelAttribute("form") VariableBudgetForm form,
                          Model model) {
         historyService.deleteById(form.getUserId(), id);
         model.addAttribute("histories", historyService.recentByUser(form.getUserId(), 5));
-        return "redirect:/variablebudget";
+        return "variablebudget/variableBudget";
     }
     
 }

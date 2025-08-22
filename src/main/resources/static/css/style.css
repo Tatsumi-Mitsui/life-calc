@@ -8,7 +8,7 @@
 	--line: #e5e5e5;
 	--bg: #fafafa;
 	--white: #fff;
-	--danger: #ff0033;
+	--negative: #ff0033;
 	--positive: #0033cc;	/* 計算結果の青 */
 
 	/* フォント */
@@ -24,23 +24,21 @@
 }
 
 *{ box-sizing: border-box; }
-html,body { height: 100%; }
+html,body {
+	height: 100%;
+}
+
 body {
 	margin: 0;
 	color: var(--ink);
-	background-color: var(--bg);
+	background: var(--bg);
 	font-family: var(--font-sans-rounded);	/* 既定フォント（丸ゴ寄り） */
-	font-size: 16px;
-	line-height: 1.6;
+	font-size: 18px;
+	line-height: 1.7;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
-	text-rendering: optimizeLegibility;
-	font-kerning: normal;
 	font-variant-numeric: tabular-nums lining-nums;	/* 金額の桁揃え */
 	letter-spacing: 0.02em;
-	line-break: strict;
-	word-break: keep-all;
-	overflow-wrap: anywhere;
 }
 
 /* UI寄りにする場合： <body class="use-ui-font"> */
@@ -52,10 +50,8 @@ body .use-ui-font {
 /* ヘッダー */
 header {
 	background: var(--brand);
-	color: #fff;
 	text-align: center;
 	padding: 14px 12px;
-	margin-top: 0;		/* 余白なし */
 }
 
 header .logo {
@@ -79,7 +75,7 @@ footer {
 /* ===== タイトル等 ===== */
 h2 {
 	margin: 20px 0 8px;
-	font-size: 22px;
+	font-size: 24px;
 }
 
 .description {
@@ -89,11 +85,11 @@ h2 {
 
 /* ===== 2カラムレイアウト（Grid） ===== */
 .page-grid {
-	max-width: 1000px;
+	max-width: clamp(960px, 96vw, 1280px);
 	margin: 0 auto;
-	padding:  24px 16px;
+	padding:  24px 24px;
 	display: grid;
-	grid-template-columns: 5fr 2fr;	/* 左：メイン　右：履歴 */
+	grid-template-columns: 11fr 4fr;	/* 左：メイン　右：履歴 */
 	gap: 24px;
 	align-items: start;
 }
@@ -102,8 +98,11 @@ h2 {
 	min-width: 0;
 }
 
+/* 画面がかなり狭いときは1カラムに */
 @media (max-width: 900px) {
-	.page-grid {grid-template-columns: 1fr; }
+	.page-grid {
+		grid-template-columns: 1fr;
+	}
 }
 
 /* ===== フォーム共通 ===== */
@@ -112,7 +111,7 @@ form {
 }
 
 .input-block {
-	margin: 14px 0;
+	margin: 16px 0;
 }
 
 .input-block > label {
@@ -128,15 +127,18 @@ form {
 }
 
 .input-row > span {
-	color: var(--muted);
+	color: var(--ink);
+	font-weight: 700;
 }
 
 /* 入力欄 */
-input[type="number"],
-input[type="text"] {
+.input-row input[type="number"],
+.input-row input[type="text"] {
 	width: 100%;
-	max-width: 420px;
-	padding: 10px 12px;
+	max-width: 520px;
+	font-size: 18px;
+	padding: 10px 16px;
+	line-height: 1.6;
 	border: 1px solid var(--line);
 	border-radius: 8px;
 	background: var(--white);
@@ -157,20 +159,20 @@ input:focus {
 }
 
 /* number の上下ボタンを消す（Chrome/Edge/Safari/Firefox） */
-input[type=number]::-webkit-inner-spin-button,
-input[type=number]::-webkit-outer-spin-button {
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
 	-webkit-appearance: none;
 	margin: 0;
 }
 
-input[type=number] {
+input[type="number"] {
 	-moz-appearance: textfield;
 	appearance: textfield;
 }
 
 /* バリデーションメッセージ */
 .field-error {
-	color: var(--danger);
+	color: var(--negative);
 	font-size: 13px;
 	margin-top: 6px;
 }
@@ -195,49 +197,65 @@ input[type=number] {
 	color: #0099ff;
 }
 
-.delete-btn .icon-minus {
-	font-size: 28px;
-	color: var(--danger);
+/* 入力行右端の削除ボタン：へこみ感を消し、縦位置を揃える */
+.input-row .delete-btn {
+	align-self: center;
+	margin-left: 8px;
 }
 
-.delete-btn {
-	margin-left: 6px;
+.input-row .delete-btn .icon-minus {
+	font-size: 22px;
+	color: var(--negative);
 }
 
-/* ===== 実行ボタン ===== */
-.form-buttons {
-	margin: 16px 0 0;
+/* ===== アクション行（計算・保存 横並び＆中央） ===== */
+.actions {
 	display: flex;
-	gap: 8px;
+	justify-content: center;
+	align-items: center;
+	gap: 12px;
+	margin-top: 16px;
 }
 
-.submit-btn, .save-btn {
+.actions .submit-btn,
+.actions .save-btn {
 	appearance: none;
 	border: none;
 	cursor: pointer;
-	border-radius: 10px;
-	padding: 10px 16px;
+	border-radius: 12px;
+	padding: 12px 18px;
+	font-size: 16px;
 	font-weight: 600;
 	box-shadow: 0 1px 0 rgba(0,0,0,0.05);
+	min-width: 120px;
 }
 
-.submit-btn {
+/* 計算ボタン */
+.actions .submit-btn {
 	background: #66cc00;
 	color: #fff;
 }
 
-.submit-btn:hover {
+.actions .submit-btn:hover {
 	filter: brightness(0.95);
 }
 
-.save-btn {
-	background: #111827;
+/* 保存ボタン */
+.actions .save-btn {
+	background: #2563eb;
 	color: #fff;
 }
 
-.save-btn[disabled] {
-	opacity: 0.5;
-	cursor: not-allowed;
+.actions .save-btn:hover {
+	filter: brightness(0.96);
+}
+
+/* ===== 入力列を中央寄せ（計算エリア内） ===== */
+.main-pane form#calc-form .input-block,
+.main-pane form#calc-form .add-button-wrapper {
+	max-width: 520px;	/* 入力列の見た目幅 */
+	margin-left: auto;
+	margin-right: auto;
 }
 
 /* ===== 計算結果パネル ===== */
@@ -247,37 +265,55 @@ input[type=number] {
 	padding: 16px 18px;
 	background: var(--white);
 	margin-top: 16px;
+	max-width: 520px;
+	margin-left: auto;
+	margin-right: auto;
 }
 
 .result-area h3 {
-	margin: 0 0 1.5rem;	/* 見出し下：1.5em */
+	margin: 0 0 1.5em;	/* 見出し下：1.5em */
 }
 
 .result-row {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 12px;
 	margin: 0 0 0.8em;	/* ラベル ↔ 金額 の間は0.5～0.8emの上限寄り */
-	line-height: 1.6;
+}
+
+/* ラベル側は折り返し防止 */
+.result-row > span:first-child {
+	white-space: nowrap;
 }
 
 .result-row .value {
-	display: block;		/* ラベルの下に金額を改行表示 */
+	min-width: 10ch;
+	text-align: right;	/* ラベルの下に金額を改行表示 */
 	padding-left: 2em;	/* 金額のインデント（全角約2文字分） */
+	font-size: 20px;
+	font-variant-numeric: tabular-nums;
 }
 
 /* 金額の色 */
-.result-row .value.positive {
+.result-row .value.positive,
+.result-row .value.positive * {
 	color: var(--positive);
 }
 
-.result-row .value.negative {
-	color: var(--danger);
+.result-row .value.negative,
+.result-row .value.negative * {
+	color: var(--negative);
 }
 
 /* ===== 履歴（右カラム） ===== */
 .history-header {
 	display: flex;
 	justify-content: space-between;
-	align-items: center;
-	margin: 8px 0 12px;
+	align-items: flex-end;
+	margin: 4px 0 12px;
+	padding-bottom: 8px;
+	border-bottom: 1px solid var(--line);
 }
 
 /* 後でCSV出力ボタンを置く */
@@ -290,6 +326,7 @@ input[type=number] {
 	gap: 12px;
 }
 
+/* 履歴カード */
 .history-card {
 	border:1px solid var(--line);
 	border-radius: 8px;
@@ -299,44 +336,53 @@ input[type=number] {
 
 .history-card .row {
 	display: flex;
-	justify-content: space-between;
+	align-items: baseline;
 	gap: 12px;
 	padding: 4px 0;
 }
 
 .history-card .row span:first-child {
 	color: var(--muted);
+	white-space: nowrap;
+	flex: 0 0 auto;		/* 幅を固定 */
 }
 
 .history-card .row span:last-child {
+	flex: 1 1 auto;		/* 伸縮可 */
 	text-align: right;
-	min-width: 120px;
+	min-width: 8ch;		/* 小さすぎる崩れ防止 */
 	font-variant-numeric: tabular-nums;
 }
 
-/* 強調（使える変動費の行） - HTMLは.row.result */
-.history-card .row.result span:last-child {
+/* 使える変動費（強調行）の色を"親子共に適用" */
+.history-card .row.result .num,
+.history-card .row.result .num * {
 	color: var(--positive);
 	font-weight: 600;
 }
 
-.history-card .row.result span:last-child.neg {
-	color: var(--danger);
+.history-card .row.result .num.negative,
+.history-card .row.result .num.negative * {
+	color: var(--negative);
 }
 
-.history-card .more {
-	display: inline-block;
-	margin-top: 6px;
-	text-decoration: none;
+/* 履歴個別削除ボタン */
+.history-card form .delete-btn {
+	padding: 0;
+	border: none;
+	background: none;
+	cursor: pointer;
+	color: var(--muted);
+	text-decoration: underline;
+	font-size: 1.05rem;
+}
+
+.history-card form .delete-btn:hover {
 	color: #0b57d0;
-	font-weight: 600;
+	filter: none;
 }
 
-.history-card .more[aria-disabled="true"] {
-	color: #9aa0a6;
-	cursor: default;
-}
-
+/* 空表示 */
 .history-empty {
 	color: var(--muted);
 	text-align: center;
