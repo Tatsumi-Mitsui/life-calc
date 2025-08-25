@@ -101,13 +101,13 @@
 					<button type="button" id="add-fixed" class="add-btn" onclick="addCost()">
 						<i class="fa-solid fa-circle-plus icon-plus"></i>
 					</button>
-				</div>			
+				</div>
 			</form>
 			
 			<!-- 共通アクション行（中央横並び）-->
 			<div class="actions">
 				<!-- 計算ボタン -->
-				<button type="submit" class="submit-btn">計算する</button>
+				<button type="submit" class="submit-btn" form="calc-form">計算する</button>
 
 				<!-- 保存ボタン：/save にPOST。calcフォームの値をJSでコピーして送る -->
 				<form id="save-form" th:action="@{/variablebudget/save}" th:object="${form}" method="post" class="form-buttons">

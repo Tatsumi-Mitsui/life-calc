@@ -26,9 +26,10 @@
 
     // 空行削除
     function pruneEmptyFixedCosts() {
+        if (!listEl) return;
         const blocks = $$('.fixed-cost-block', listEl);
         // 中間の空行を削除（最低1行は残す）
-        blocks.forEach((block, i) => {
+        blocks.forEach((block) => {
             const input = $('input[type="number"]', block);
             if (!input) return;
             const enpty = (input.value === '' || input.value == null);
@@ -40,6 +41,7 @@
 
     // ----- 行追加 -----
     function addCost() {
+        if (!tplEl || !listEl) return;
         const idx = $$('.fixed-cost-block', listEl).length;     // 次のインデックス
         const num = idx + 1;                                    // 表示番号
 
@@ -59,6 +61,7 @@
 
     // ----- 行削除（最低1行は残す） -----
     function removeCost(btn) {
+        if (!listEl) return;
         const blocks = $$('.fixed-cost-block', listEl);
         if (blocks.length <= 1) return;                         // 1行は残す
 
@@ -70,6 +73,7 @@
 
     // ----- 再採番によって固定費{n}のラベルと name="fixedCosts[n]"を整える＆削除ボタンの表示制御 -----
     function reindex() {
+        if(!listEl) return;
         const blocks = $$('.fixed-cost-block', listEl);
 
         blocks.forEach((block, i) => {
@@ -130,13 +134,18 @@
     }
 
     // ----- イベント束ね -----
+    let calcSubmitting = false;
     function bindEvents() {
         if (addBtn) addBtn.addEventListener('click', addCost);
         if (saveBtn) saveBtn.addEventListener('click', handleSave);
 
         if (calcForm) {
-            calcForm.addEventListener('submit', () => {
+            calcForm.addEventListener('submit', (e) => {
+                if (calcSubmitting) return;
                 pruneEmptyFixedCosts();
+
+                calcSubmitting = true; // 二重送信予防（ページ移行前の連打対策）
+                setTimeout(() => { calcSubmitting = false; }, 1500);
             });
         }
 

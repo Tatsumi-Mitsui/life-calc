@@ -17,50 +17,58 @@ import java.util.concurrent.atomic.AtomicLong;
  * 差し替え可：あとでJPAに乗せ替える時もServiceやControllerの修正不要
  */
 
-@Repository
+@Repository("sessionHistoryRepository")
 public class InMemoryHistoryRepository implements HistoryRepository {
     
-    // 採番用のIDカウンター（スレッドセーフ）
-    private final AtomicLong idGenerator = new AtomicLong(0);
-
     // userIdごとに履歴を保持
-    private final Map<Long, List<HistoryView>> store = new ConcurrentHashMap<>();
-
-    private Long uid(Long userId) { return (userId == null) ? 0L : userId; }
+    private final Map<Long, NavigableMap<Long, HistoryView>> store = new ConcurrentHashMap<>();
+    
+    // 採番用のIDカウンター（スレッドセーフ）
+    private final AtomicLong seq = new AtomicLong(1);
 
     @Override
     public Long save(HistoryView history) {
-        Long id = idGenerator.incrementAndGet();
-        HistoryView withId = new HistoryView(
-            id,
-            history.savedAt(),
-            history.userId(),
-            history.income(),
-            history.fixedCosts(),
-            history.fixedCostTotal(),
-            history.resultVariable()
+        Long id = (history.getId() != null) ? history.getId() : seq.getAndIncrement();
+        Long userId = (history.getUserId() == null) ? 0L : history.getUserId();
+
+        var perUser = store.computeIfAbsent(userId, k -> new TreeMap<>(Comparator.reverseOrder()));
+
+        // 破壊的変更の影響を避けるためコピーして格納
+        HistoryView snapshot = new HistoryView(
+                id,
+                history.getSavedAt(),
+                userId,
+                nz(history.getIncome()),
+                (history.getFixedCosts() == null) ? List.of() : List.copyOf(history.getFixedCosts()),
+                nz(history.getFixedCostTotal()),
+                nz(history.getResultVariable())
         );
-        Long key = uid(history.userId());       // null→0L に正規化してキーに使う
-        store.computeIfAbsent(key, k -> new ArrayList<>()).add(0, withId); // 新しいものを先頭に追加
+        
+        perUser.put(id, snapshot);
         return id;
     }
 
     @Override
     public List<HistoryView> findRecentByUser(Long userId, int limit) {
-        Long key = uid(userId);         // ここで正規化
-        return store.getOrDefault(key, Collections.emptyList())
-                    .stream()
-                    .limit(limit)
-                    .toList();
+        Long uid = (userId == null) ? 0L : userId;          // ここで正規化
+        var perUser = store.get(uid);
+        if (perUser == null) {
+            return List.of();
+        }
+        return perUser.values().stream().limit(Math.max(1, limit)).toList();
     }
 
     @Override
     public boolean deleteById(Long userId, Long id) {
-        Long key = uid(userId);         //ここでも正規化
-        List<HistoryView> list = store.get(key);
-        if (list == null) {
+        Long uid = (userId == null) ? 0L : userId;         //ここでも正規化
+        var perUser = store.get(uid);
+        if (perUser == null) {
             return false;
         }
-        return list.removeIf(h -> Objects.equals(h.id(), id));
+        return perUser.remove(id) != null;
+    }
+
+    private static Long nz(Long v) {
+        return v == null ? 0L : v;
     }
 }

@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 /*
  * 履歴の親エンティティ（正規化：Entry 1 : N Item）
  * - 「ヘッダ情報」（合計・結果・保存日時など）を保持
@@ -41,7 +43,8 @@ public class HistoryEntry {
     private Long resultVariable;
 
     // 保存日時
-    @Column(nullable = false)
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
     private LocalDateTime savedAt;
 
     // 明細（行順は idx 昇順で保持）
@@ -52,7 +55,6 @@ public class HistoryEntry {
     // ===== ライフサイクル =====
     @PrePersist
     public void onPrePersist() {
-        if (savedAt == null) savedAt = LocalDateTime.now();
         if (userId == null) userId = 0L;    // 未ログイン時の暫定
         if (fixedCostTotal == null) fixedCostTotal = 0L;
         if (resultVariable == null) resultVariable = 0L;

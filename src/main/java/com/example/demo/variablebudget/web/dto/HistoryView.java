@@ -19,12 +19,48 @@ import java.util.List;
  * Controller/HTMLはこのDTOだけ見ればOK → DB実装差し替えが容易
  */
 
-public record HistoryView(
-        Long id,                    // 履歴ID
-        LocalDateTime savedAt,      // 保存日時
-        Long userId,                // ユーザーID（未ログインはnull想定→repo側で0扱いでもOK）
-        Long income,                // 収入
-        List<Long> fixedCosts,      // 固定費明細（行順を維持した金額のリスト）
-        Long fixedCostTotal,        // 固定費合計
-        Long resultVariable         // 使える変動費
-) {}
+public class HistoryView {
+
+        private Long id;                    // 履歴ID
+        private LocalDateTime savedAt;      // 保存日時
+        private Long userId;                // ユーザーID（未ログインはnull想定→repo側で0扱いでもOK）
+        private Long income;                // 収入
+        private List<Long> fixedCosts;      // 固定費明細（行順を維持した金額のリスト）
+        private Long fixedCostTotal;        // 固定費合計
+        private Long resultVariable;        // 使える変動費
+
+        public HistoryView(Long id,
+                           LocalDateTime savedAt,
+                           Long userId,
+                           Long income,
+                           List<Long> fixedCosts,
+                           Long fixedCostTotal,
+                           Long resultVariable) {
+        
+            this.id = id;
+            this.savedAt = savedAt;
+            this.userId = userId;
+            this.income = income;
+            this.fixedCosts = fixedCosts;
+            this.fixedCostTotal = fixedCostTotal;
+            this.resultVariable = resultVariable;
+        }
+
+        // ===== getter =====
+        public Long getId(){ return id; }
+        public LocalDateTime getSavedAt() { return savedAt; }
+        public Long getUserId() { return userId; }
+        public Long getIncome() { return income; }
+        public List<Long> getFixedCosts() { return fixedCosts; }
+        public Long getFixedCostTotal() { return fixedCostTotal; }
+        public Long getResultVariable() { return resultVariable; }
+
+        // ===== setter =====
+        public void setId(Long id) { this.id = id; }
+        public void setSavedAt(LocalDateTime savedAt) { this.savedAt = savedAt; }
+        public void setUserId(Long userId) { this.userId = userId; }
+        public void setIncome(Long income) { this.income = income; }
+        public void setFixedCosts(List<Long> fixedCosts) { this.fixedCosts = fixedCosts; }
+        public void setFixedCostTotal(Long fixedCostTotal) { this.fixedCostTotal = fixedCostTotal; }
+        public void setResultVariable(Long resultVariable) { this.resultVariable = resultVariable; }
+}

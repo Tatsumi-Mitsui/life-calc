@@ -3,6 +3,7 @@ package com.example.demo.variablebudget.service;
 import com.example.demo.variablebudget.repository.HistoryRepository;
 import com.example.demo.variablebudget.web.dto.HistoryView;
 import com.example.demo.variablebudget.web.model.VariableBudgetForm;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -25,13 +26,26 @@ import java.util.List;
 @Service
 public class HistoryAppService {
     
-    private final HistoryRepository repository;
+    // 未ログイン = セッション保存（メモリ）
+    private final HistoryRepository sessionRepo;
+    // ログイン済み = DB保存（JPA）
+    private final HistoryRepository jpaRepo;
+
     private final CalcService calcService;
 
-    public HistoryAppService(HistoryRepository repository,
-                                CalcService calcService) {
-        this.repository = repository;
+    public HistoryAppService(
+            @Qualifier("sessionHistoryRepository") HistoryRepository sessionRepo,
+            @Qualifier("jpaHistoryRepository") HistoryRepository jpaRepo,
+            CalcService calcService
+    ){
+        this.sessionRepo = sessionRepo;
+        this.jpaRepo = jpaRepo;
         this.calcService = calcService;
+    }
+
+    // 使うリポジトリを userId の有無で振り分け
+    private HistoryRepository repoFor(Long userId) {
+        return (userId == null || userId == 0L) ? sessionRepo : jpaRepo;
     }
 
     // 現在の入力を再計算してから、履歴として保存。戻り値は保存ID。
@@ -51,16 +65,16 @@ public class HistoryAppService {
                 form.getFixedCostTotal(),
                 form.getResultVariable()
         );
-        return repository.save(snapshot);
+        return repoFor(form.getUserId()).save(snapshot);
     }
 
     // 指定ユーザーの直近履歴を取得（limit件）。未ログインはuserId=null → 0L 扱いは repo に委譲。
     public List<HistoryView> recentByUser(Long userId, int limit) {
-        return repository.findRecentByUser(userId, limit);
+        return repoFor(userId).findRecentByUser(userId, limit);
     }
 
     // 履歴の個別削除。Controller から userId と id を受け取って repo に委譲。
     public boolean deleteById(Long userId, Long id) {
-        return repository.deleteById(userId, id);
+        return repoFor(userId).deleteById(userId, id);
     }
 }
