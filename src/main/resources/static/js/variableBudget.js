@@ -129,6 +129,10 @@
             saveForm.appendChild(hidden);
         });
 
+        if (saveBtn) {
+            saveBtn.disabled = true;
+        }
+        
         // 送信
         saveForm.submit();
     }

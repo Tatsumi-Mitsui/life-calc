@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /*
  * 画面用コントローラ（最小）
@@ -39,9 +40,14 @@ public class VariableBudgetController {
         this.historyService = historyService;
     }
 
-    // 初期表示：フォームは空のまま。右の履歴だけ読み込む。
+    // 初期表示：Flash Attribute の formがあればそれを使う。なければ空フォームを作る。
     @GetMapping
     public String show(@ModelAttribute("form") VariableBudgetForm form, Model model) {
+        // 初回（Flushがない）だけ新規フォームをセット
+        if (!model.containsAttribute("form")) {
+            form = new VariableBudgetForm();
+            model.addAttribute("form", form);
+        }
         model.addAttribute("histories", historyService.recentByUser(form.getUserId(),5));
         return "variablebudget/variableBudget";
     }
@@ -61,23 +67,35 @@ public class VariableBudgetController {
      * 右の履歴は保存時にだけ更新される。（計算ボタンとは分離）
      */
     @PostMapping("/save")
-    public String save(@Valid @ModelAttribute("form") VariableBudgetForm form, BindingResult br, Model model) {
+    public String save(@Valid @ModelAttribute("form") VariableBudgetForm form,
+                        BindingResult br,
+                        RedirectAttributes ra,
+                        Model model) {
         if (!br.hasErrors()) {
-            calcService.fillTotals(form);
-            historyService.saveSnapshot(form);  // 内部で再計算 → スナップショット保存
+            // バリデーション NG はそのまま再描画（エラー表示のためリダイレクトしない）
+            model.addAttribute("histories", historyService.recentByUser(form.getUserId(), 5));
+            return "variablebudget/variableBudget";
         }
-        model.addAttribute("histories", historyService.recentByUser(form.getUserId(),5));
-        return "variablebudget/variableBudget";
+
+        // ここで再計算してから保存（サービス側でも二重防御）
+        calcService.fillTotals(form);
+        historyService.saveSnapshot(form);
+
+        // 入力値をリダイレクト先へ引き継ぎ（画面に残す）
+        ra.addFlashAttribute("form", form);
+        return "redirect:/variablebudget";
     }
 
     // 個別削除：POST /variablebudget/history/delete/{id}
     @PostMapping("/history/delete/{id}")
     public String delete(@PathVariable("id") Long id,
                          @ModelAttribute("form") VariableBudgetForm form,
-                         Model model) {
+                         RedirectAttributes ra) {
         historyService.deleteById(form.getUserId(), id);
-        model.addAttribute("histories", historyService.recentByUser(form.getUserId(), 5));
-        return "variablebudget/variableBudget";
+
+        // 入力値はそのままにして一覧だけ表示したいので form を持ち越す
+        ra.addFlashAttribute("form", form);
+        return "redirect:/variablebudget";
     }
     
 }

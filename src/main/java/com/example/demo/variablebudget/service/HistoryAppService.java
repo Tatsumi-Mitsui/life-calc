@@ -5,6 +5,7 @@ import com.example.demo.variablebudget.web.dto.HistoryView;
 import com.example.demo.variablebudget.web.model.VariableBudgetForm;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -49,12 +50,15 @@ public class HistoryAppService {
     }
 
     // 現在の入力を再計算してから、履歴として保存。戻り値は保存ID。
+    @Transactional
     public Long saveSnapshot(VariableBudgetForm form) {
         // 入力から固定費合計/使える変動費を再計算して確定
         calcService.fillTotals(form);
 
         // リストはコピーしておく（ミュータブル参照を持たない）
-        var fixedListCopy = List.copyOf(form.getFixedCosts());
+        List<Long> fixedListCopy = form.getFixedCosts() == null
+                ? List.of()
+                : List.copyOf(form.getFixedCosts());
 
         HistoryView snapshot = new HistoryView(
                 null,                           // id は repo 側で採番
@@ -69,11 +73,14 @@ public class HistoryAppService {
     }
 
     // 指定ユーザーの直近履歴を取得（limit件）。未ログインはuserId=null → 0L 扱いは repo に委譲。
+    // パフォーマンス最適化のため、読み取り専用
+    @Transactional(readOnly = true)
     public List<HistoryView> recentByUser(Long userId, int limit) {
         return repoFor(userId).findRecentByUser(userId, limit);
     }
 
     // 履歴の個別削除。Controller から userId と id を受け取って repo に委譲。
+    @Transactional
     public boolean deleteById(Long userId, Long id) {
         return repoFor(userId).deleteById(userId, id);
     }
