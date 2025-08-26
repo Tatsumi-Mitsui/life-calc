@@ -71,7 +71,7 @@ public class VariableBudgetController {
                         BindingResult br,
                         RedirectAttributes ra,
                         Model model) {
-        if (!br.hasErrors()) {
+        if (br.hasErrors()) {
             // バリデーション NG はそのまま再描画（エラー表示のためリダイレクトしない）
             model.addAttribute("histories", historyService.recentByUser(form.getUserId(), 5));
             return "variablebudget/variableBudget";
