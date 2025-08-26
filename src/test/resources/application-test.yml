@@ -1,20 +1,16 @@
+# ===== TEST =====
 spring:
     datasource:
-        url: jdbc:h2:mem:life_calc_test;MODE=PostgreSQL;DB_CLOSR_DELAY=-1;DATABASE_TO_LOWER=TRUE
+        url: jdbc:h2:mem:life_calc_test;MODE=PostgreSQL;DB_CLOSE_DELAY=-1
         driver-class-name: org.h2.Driver
         username: sa
         password: ""
+    
     jpa:
         hibernate:
-            ddl-auto: create-drop # テスト起動時に作成・終了時に削除
+            ddl-auto: create-drop   # テストごとに作って削除
+        database-platform: org.hibernate.dialect.H2Dialect
         open-in-view: false
-        properties:
-            hibernate:
-                format_sql: true
+    
     flyway:
         enabled: false
-
-logging:
-  level:
-    org.hibernate.SQL: debug
-    org.hibernate.tupe.desciptor.sql.BasicBinder: trace

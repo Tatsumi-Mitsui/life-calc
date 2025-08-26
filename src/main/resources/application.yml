@@ -59,4 +59,4 @@ spring:
                 jdbc:
                     time_zone: Asia/Tokyo
     flyway: 
-      enabled: true
+      enabled: true  
