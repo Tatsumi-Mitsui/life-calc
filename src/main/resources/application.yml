@@ -42,7 +42,7 @@ spring:
         activate:
             on-profile: prod
     datasource:
-        url: jdbc:postgresql://${DB_HOST_PROD}:${DB_PORT_PROD}/${DB_NAME}?sslmode=require
+        url: jdbc:postgresql://${DB_HOST_PROD}:${DB_PORT_PROD}/${DB_NAME}
         username: ${DB_USER_PROD}
         password: ${DB_PASSWORD_PROD}
         hikari:

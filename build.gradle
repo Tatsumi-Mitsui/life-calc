@@ -38,3 +38,7 @@ tasks.withType(JavaCompile).configureEach {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+tasks.named('bootJar') {
+	archiveFileName = "app.jar"
+}
