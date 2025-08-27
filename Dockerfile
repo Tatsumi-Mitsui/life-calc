@@ -1,15 +1,15 @@
-# syntax=docker/dockerfile:1
-
 # ----- build stage -----
-FROM gradle:8.10.2-jdk21 AS builder
+FROM gradle:8.10.2-jdk21-alpine AS builder
 WORKDIR /home/gradle/src
 COPY --chown=gradle:gradle . .
-RUN ./gradlew clean bootJar -x test --no-daemon
+RUN gradle --no-daemon clean bootJar
+# 成果物のパスを固定名に
+RUN ls -l build/libs && cp build/libs/*-SNAPSHOT.jar build/libs/app/jar
 
 # ----- run stage -----
-FROM eclipse-temurin:21-jre-alpine
+FROM eclipse-temurin:21-jre-alpine AS runner
 WORKDIR /app
+# 上の bootJar の出力（単一 fat-jar）だけコピー 
 COPY --from=builder /home/gradle/src/build/libs/app.jar app.jar
-ENV Java_OPTS=""
 EXPOSE 8080
-ENTRYPOINT ["sh", "-c", "java $Java_OPTS -Dserver.port=${PORT:-8080} -jar app.jar"]
+ENTRYPOINT ["java", "-jar", "app/app.jar"]
