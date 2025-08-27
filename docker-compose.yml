@@ -1,16 +1,20 @@
+version: "3.9"
+
 services:
   db:
-    image: postgres:16-alpine
+    image: postgres:16
+    container_name: life_calc_local
+    restart: unless-stopped
     environment:
-      POSTGRES_DB: ${LOCAL_DB_NAME:-life_calc_local}
+      POSTGRES_DB: ${LOCAL_DB_NAME:-life_calc}
       POSTGRES_USER: ${LOCAL_DB_USER:-life_user}
       POSTGRES_PASSWORD: ${LOCAL_DB_PASSWORD:-lifepass}
     ports:
-      - "${LOCAL_DB_PORT:5432}:5432"
+      - "${LOCAL_DB_PORT:-5432}:5432"
     volumes:
       - pg_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${LOCAL_DB_USER:-life_user} -d ${LOCAL_DB_NAME:-life_calc_local}"]
+      test: ["CMD-SHELL", "pg_isready -U ${LOCAL_DB_USER:-life_user} -d ${LOCAL_DB_NAME:-life_calc}"]
       interval: 5s
       timeout: 3s
       retries: 20
@@ -23,19 +27,22 @@ services:
       args:
         # Gradle のキャッシュキーに使う
         APP_ENV: local
-    environment:
-      # Spring へ渡す接続情報（application.yml で参照）
-      DB_HOST: db
-      DB_PORT: 5432
-      DB_NAME: ${LOCAL_DB_NAME:-life_calc_local}
-      DB_USER: ${LOCAL_DB_USER:-life_user}
-      DB_PASSWORD: ${LOCAL_DB_PASSWORD:-lifepass}
-      SPRING_PROFILES_ACTIVE: dev
+
+    container_name: life_calc_app
     depends_on:
       db:
         condition: service_healthy
+    environment:
+      # Spring へ渡す接続情報（application.yml で参照）
+      SPRING_PROFILES_ACTIVE: dev
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: ${LOCAL_DB_NAME:-life_calc}
+      DB_USER: ${LOCAL_DB_USER:-life_user}
+      DB_PASSWORD: ${LOCAL_DB_PASSWORD:-lifepass}
     ports:
-      - "8080:8080"
+      - "${APP_PORT:-8080}:8080"
+    restart: unless-stopped
 
 volumes:
   pg_data: 

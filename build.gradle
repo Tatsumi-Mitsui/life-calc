@@ -45,6 +45,6 @@ tasks.named('test') {
 }
 
 // 生成物名を固定しておくと COPY が楽
-bootJar {
+tasks.named('bootJar') {
 	archiveFileName = 'app.jar'
 }
