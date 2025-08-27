@@ -9,4 +9,4 @@ FROM eclipse-temurin:21-jre-alpine AS runner
 WORKDIR /app 
 COPY --from=builder /home/gradle/src/build/libs/app.jar app.jar
 ENV SPRING_PROFILES_ACTIVE=dev
-ENTRYPOINT ["java", "-jar", "app/app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
