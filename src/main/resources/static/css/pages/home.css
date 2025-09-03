@@ -1,0 +1,6 @@
+@charset "UTF-8";
+
+.home .hello {
+    margin: 24px auto;
+    max-width: 720px;
+}

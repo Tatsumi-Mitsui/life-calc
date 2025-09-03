@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ja" xlms:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: siteHead('ログイン', ${#lists.emptyList()}, ${#lists.emptyList()})}"></head>
+
+<body>
+    <!-- 共通ヘッダー -->
+    <header th:replace="~{fragments/header :: siteHeader}"></header>
+
+    <main>
+        <section class="auth-pane">
+            <h2>ログイン</h2>
+
+            <!-- 認証エラー表示（Spring Security が /auth/login?error で返す） -->
+            <div class="field-error" th:if="${param.error}">
+                メールアドレスまたはパスワードが違います。
+            </div>
+            <div class="notice" th:if="${param.logout}">
+                ログアウトしました。
+            </div>
+
+            <form th:action="@{/auth/login}" method="post" class="auth-form">
+                <!-- CSRF -->
+                <th:block th:if="${_csrf != null}">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                </th:block>
+
+                <div class="input-block">
+                    <label for="email">メールアドレス</label>
+                    <input type="email" name="email" id="email" inputmode="email" autocomplete="email" required>
+                </div>
+
+                <div class="input-block">
+                    <label for="password">パスワード</label>
+                    <input type="password" name="password" id="password" autocomplete="current-password" required>
+                </div>
+
+                <div class="actions">
+                    <button type="submit" class="submit-btn">ログイン</button>
+                    <a th:href="@{/auth/signup}" class="link">アカウントの新規作成はこちら</a>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <!-- 共通フッター -->
+    <footer th:replace="~{fragments/footer :: siteFooter}"></footer>
+</body>
+</html>

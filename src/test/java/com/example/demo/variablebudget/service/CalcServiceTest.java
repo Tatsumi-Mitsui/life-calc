@@ -1,7 +1,9 @@
 package com.example.demo.variablebudget.service;
 
-import com.example.demo.variablebudget.web.model.VariableBudgetForm;
 import org.junit.jupiter.api.Test;
+
+import com.example.demo.feature.variablebudget.service.CalcService;
+import com.example.demo.feature.variablebudget.web.model.VariableBudgetForm;
 
 import java.util.List;
 

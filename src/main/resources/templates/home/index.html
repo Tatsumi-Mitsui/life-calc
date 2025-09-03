@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+    <th:block th:replace="~{fragments/head :: siteHead('ホーム', ${ {'/css/pages/home.css'} })}"></th:block>
+    <body class="home">
+        <th:block th:replace="~{fragments/header :: siteHeader}"></th:block>
+
+        <main class="container">
+            <section class="hero">
+                <h1 class="page-title"></h1>
+            </section>
+        </main>
+    </body>
+</html>
