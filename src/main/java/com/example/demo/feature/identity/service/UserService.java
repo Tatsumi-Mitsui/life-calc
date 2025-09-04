@@ -1,21 +1,25 @@
 package com.example.demo.feature.identity.service;
 
-import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.example.demo.feature.identity.entity.Role;
 import com.example.demo.feature.identity.entity.User;
+import com.example.demo.feature.identity.repository.RoleRepository;
 import com.example.demo.feature.identity.repository.UserRepository;
+import com.example.demo.feature.identity.web.model.SignupForm;
 
 @Service
 public class UserService {
     
-    public static final String ROLE_USER = "ROLE_USER";
-
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -27,24 +31,22 @@ public class UserService {
      * @return 保存されたUser 
      */
 
-    
-    public User register(String displayName, String email, String rawPassword) {
+    @Transactional
+    public User register(SignupForm form) {
         // 既に存在するかチェック
-        if (userRepository.findByEmail(email).isPresent()) {
-            throw new IllegalStateException("このメールアドレスは既に使われています");
+        if (userRepository.existsByEmail(form.getEmail())) {
+            throw new IllegalArgumentException("このメールアドレスは既に使われています");
         }
 
-        // パスワードをエンコード
-        String encodedPassword = passwordEncoder.encode(rawPassword);
+        // "USER" を基本ロール名として採用（DBは素名、Security返却時に ROLE_ を付ける方針）
+        Role userRole = roleRepository.findByName("USER")
+                .orElseThrow(() -> new IllegalStateException("ロール 'USER' が未作成"));
 
-        // エンティティ生成
         User user = new User();
-        user.setDisplayName(displayName);
-        user.setEmail(email);
-        user.setPassword(encodedPassword);
-
-        // デフォルトロール付与（ROLE_USER など）
-        user.setRole("ROLE_USER");
+        user.setEmail(form.getEmail());
+        user.setPassword(passwordEncoder.encode(form.getPassword()));
+        user.setDisplayName(form.getDisplayName());
+        user.setRole(userRole);
 
         // DB保存
         return userRepository.save(user);

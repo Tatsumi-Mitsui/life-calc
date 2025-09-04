@@ -4,6 +4,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -24,41 +25,42 @@ public class AuthController {
 
     // ログイン画面（Spring Securityのフォームログイン先と合わせる）
     @GetMapping("/login")
-    public String loginPage() {
-        // templates/feature/identity/login.html
-        return "feature/identity/login";
+    public String login() {
+        // templates/auth/login.html
+        return "auth/login";
     }
     
-    // サインアップ画面
+    // サインアップ（GET）
     @GetMapping("/signup")
-    public String signupPage(Model model) {
-        // 既に form が入っていなければ新規で突っ込む
-        if (!model.containsAttribute("form")){
-            model.addAttribute("form", new SignupForm());
-        }
-        // templates/feature/identity/signup.html
-        return "feature/identity/signup";
+    public String signupForm(Model model) {
+        model.addAttribute("form", new SignupForm());
+        // templates/auth/signup.html
+        return "auth/signup";
     }
 
-    // サインアップ実行
+    // サインアップ（POST）
     @PostMapping("/signup")
-    public String doSignup(@Valid SignupForm form, BindingResult binding, Model model) {
-        
-        // 入力エラー
-        if (binding.hasErrors()) {
-            return "feature/identity/signup";
+    public String register(@Valid @ModelAttribute("form") SignupForm form, BindingResult bindingResult, Model model) {
+        // 入力バリデーション
+        if (bindingResult.hasErrors()) {
+            return "auth/signup";
         }
 
         try {
             // UserService 側は「生パスワード」を渡せば中でエンコードして保存する想定
             // 既存のUserServiceのAPIに合わせて呼び出し名は変えてOK
-            userService.register(form.getDisplayName(), form.getEmail(), form.getPassword());
-        } catch (IllegalStateException dup) {
-            // メール重複のような業務例外をここで拾う想定
-            binding.rejectValue("email", "duplicate", "このメールアドレスは使用できません");
-            return "feature/identity/signup";
+            userService.register(form);
+        } catch (IllegalArgumentException dup) {
+            // 例：メール重複など
+            bindingResult.rejectValue("email", "duplicate", "このメールアドレスは使用できません");
+            return "auth/signup";
+        } catch (IllegalStateException noRole) {
+            // 例：ロール未投入
+            bindingResult.reject("role_missing", noRole.getMessage());
+            return "auth/signup";
         }
 
+        // サインアップ完了 -> ログイン画面へ（クエリで完了メッセージ）
         return "redirect:/auth/login?registered";
     }
 }

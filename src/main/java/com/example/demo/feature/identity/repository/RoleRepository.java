@@ -8,7 +8,5 @@ import com.example.demo.feature.identity.entity.Role;
 
 public interface RoleRepository extends JpaRepository<Role, Long> {
 
-    Optional<Role> findByName(String name);
-
-    boolean existsByName(String name);
+    Optional<Role> findByName(String name);     // "USER" / "ADMIN"
 }

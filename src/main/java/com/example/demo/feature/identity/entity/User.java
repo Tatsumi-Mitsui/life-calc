@@ -1,8 +1,6 @@
 package com.example.demo.feature.identity.entity;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -32,20 +30,15 @@ public class User {
     @Column(name = "display_name", nullable = false, length = 100)
     private String displayName;
 
+    /* 権限（1ユーザー1ロール） */
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "role_id", nullable = false)
+    private Role role;
+
     /* 作成日時（全体ルール：savedAt に統一） */
     @CreationTimestamp
     @Column(name = "saved_at", nullable = false, updatable = false)
     private LocalDateTime savedAt;
-
-    /* 権限 */
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-        name = "app_user_roles",
-        joinColumns = @JoinColumn(name = "user_id"),
-        inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
-    private Set<Role> role = new HashSet<>();
-
 
     // ===== getter / setter =====
 
@@ -77,17 +70,17 @@ public class User {
         this.displayName = displayName;
     }
 
+    public Role getRole() {
+        return role;
+    }
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
     public LocalDateTime getSavedAt() {
         return savedAt;
     }
     public void setSavedAt(LocalDateTime savedAt) {
         this.savedAt = savedAt;
-    }
-
-    public Set<Role> getRole() {
-        return role;
-    }
-    public void setRole(Set<Role> role) {
-        this.role = role;
     }
 }

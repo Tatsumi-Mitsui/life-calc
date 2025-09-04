@@ -1,16 +1,24 @@
 plugins {
-    id "java"
-    id "org.springframework.boot" version "3.5.5"
-    id "io.spring.dependency-management" version "1.1.7"
+    id 'java'
+    id 'org.springframework.boot' version '3.5.5'
+    id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.flywaydb.flyway' version '10.0.0'
 }
 
-group = "com.example"
-version = "0.0.1-SNAPSHOT"
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
 
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
     }
+}
+
+flyway {
+    url = 'jdbc:h2:mem:vb;MODE=PostgreSQL;DB_CLOSE_DELAY=-1'
+    user = 'sa'
+    password = ''
+    locations = ['filesystem:src/main/resources/db/migration']
 }
 
 repositories {

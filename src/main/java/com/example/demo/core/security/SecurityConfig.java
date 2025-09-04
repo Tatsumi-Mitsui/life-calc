@@ -28,22 +28,22 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 // 静的と公開ページ
                 .requestMatchers(
-                    "/",            // ホーム（後で作る）
-                    "/login", "/signup",        // 認証系画面
+                    "/",                    // ホーム（後で作る）
+                    "/variablebudget/**",               // 変動費計算
+                    "/auth/**",                         // ログイン/サインアップ画面
                     "/css/**", "/js/**", "/images/**", "/webjars/**",
-                    "/variablebudget/**",       // 変動費計算は今の公開のまま
-                    "/h2-console/**"            // dev用
+                    "/h2-console/**"            // dev用H2
                     ).permitAll()
-                // それ以外は要ログイン
-                .anyRequest().authenticated()
+                    // それ以外は要ログイン
+                    .anyRequest().authenticated()
             )
             .formLogin(login -> login
-                .loginPage("/login")                                // ログイン画面
-                .loginProcessingUrl("/login")              // POST /login
-                .usernameParameter("email")                 // フォームの name="email"
-                .passwordParameter("password")              // フォームの name="password"
-                // 直前にブロックされたページがなければ "/" へ
-                .defaultSuccessUrl("/", false)
+                .loginPage("/auth/login")                                // GET ログイン画面
+                .loginProcessingUrl("/auth/login")              // POST 認証エンドポイント
+                .usernameParameter("email")                 // <input name="email">
+                .passwordParameter("password")              // <input name="password">
+                // 直前にブロックされたURLがあれば /auth/login へ、なければ "/" へ
+                .defaultSuccessUrl("/variablebudget", false)
                 .permitAll()
             )
             .logout(logout -> logout
@@ -53,9 +53,10 @@ public class SecurityConfig {
                 .invalidateHttpSession(true)
                 .permitAll()
             )
+            // H2 Console 用
             .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"))
             .headers(h -> h.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
-            // 明示的に DaoAuthenticationProvider を差し込む
+            // DaoAuthenticationProvider を明示設定
             .authenticationProvider(daoAuthProvider());
 
         return http.build();

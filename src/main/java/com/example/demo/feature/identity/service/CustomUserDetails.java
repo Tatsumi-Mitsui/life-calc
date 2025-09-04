@@ -1,9 +1,14 @@
 package com.example.demo.feature.identity.service;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.example.demo.feature.identity.entity.User;
+import com.example.demo.feature.identity.entity.Role;
+
 import java.util.Collection;
+import java.util.List;
 
 /*
  * フレームワーク契約： getUsername() は「認証ID」を返すメソッド
@@ -13,78 +18,57 @@ import java.util.Collection;
 
 public class CustomUserDetails implements UserDetails {
     
-    private final Long id;
-    private final String email;             // 認証ID
-    private final String password;
-    private final String displayName;       // 画面表示用
-    private final Collection<? extends GrantedAuthority> authorities;
-    private final boolean accountNonExpired, accountNonLocked, credentialsNonExpired, enabled;
+    private final User user;
 
-    public CustomUserDetails(Long id,
-                             String email,
-                             String password,
-                             String displayName,
-                             Collection<? extends GrantedAuthority> authorities,
-                             boolean accountNonExpired,
-                             boolean accountNonLocked,
-                             boolean credentialsNonExpired,
-                             boolean enabled) {
+    public CustomUserDetails(User user) {
         
-        this.id = id;
-        this.email = email;
-        this.password = password;
-        this.displayName = displayName;
-        this.authorities = authorities;
-        this.accountNonExpired = accountNonExpired;
-        this.accountNonLocked = accountNonLocked;
-        this.credentialsNonExpired = credentialsNonExpired;
-        this.enabled = enabled;
+        this.user = user;
     }
 
-    public Long getId() {
-        return id;
-    }
-    
-    public String getLoginId() {
-        return email;       // アプリ用の別名
-    }
-    
-    public String getDisplayName() {
-        return displayName;
-    }
-   
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
+        Role role = user.getRole();
+        String roleName = (role != null && role.getName() != null) ? role.getName() : "USER";
+        // Securityは "ROLE_XXX" 形式の権限を見ることが多いのでここで付与
+        String authority = roleName.startsWith("ROLE_") ? roleName : "ROLE_" + roleName;
+        return List.of(new SimpleGrantedAuthority(authority));
     }
 
     @Override
     public String getPassword() {
-        return password;
+        return user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return email;       // 契約上の "username" = 認証ID（email）
+        return user.getEmail();         // 契約上の "username" = 認証ID（email）
+    }
+
+    public String getDisplayName() {
+        return user.getDisplayName();   // 表示用に displayName を追加で公開
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return accountNonExpired;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return accountNonLocked;
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return credentialsNonExpired;
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return enabled;
+        return true;
+    }
+
+    public User getUser() {
+        return this.user;
     }
 }
