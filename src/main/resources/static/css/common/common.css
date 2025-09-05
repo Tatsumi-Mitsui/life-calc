@@ -12,22 +12,22 @@
 	--negative: #ff0033;
 	--positive: #0033cc;	/* 計算結果の青 */
 	--header-fg: #f7fff7;	/* 少し柔らかめの白 */
+	
+    /* フォント */
+	--font-sans-rounded: "Hiragino Maru Gothic ProN", "ヒラギノ丸ゴ ProN W4",
+	"Hiragino Sans", "ヒラギノ角ゴ ProN W3",
+	"Noto Sans JP", "Yu Gothic", "Yu Gothic UI",
+	"Meiryo", "Segoe UI", Roboto,
+	system-ui, -apple-system, BlinkMacSystemFont,
+	"Helvetica Neue", Arial, sans-serif;
+	--font-sans-ui: system-ui, -apple-system, "Segoe UI", Roboto,
+	"Noto Sans JP", "Hiragino Sans", "Yu Gothic UI",
+	"Yu Gothic", "Meiryo", "Helvetica Neue", Arial, sans-serif;
 
 	/* 基準サイズ */
 	--content-max: 1040px;
 	--header-min: 56px;		/* モバイルでも44px超える安全圏 */
 	--header-max: 80px;		/* ややゆったり */
-
-    /* フォント */
-	--font-sans-rounded: "Hiragino Maru Gothic ProN", "ヒラギノ丸ゴ ProN W4",
-						 "Hiragino Sans", "ヒラギノ角ゴ ProN W3",
-						 "Noto Sans JP", "Yu Gothic", "Yu Gothic UI",
-						 "Meiryo", "Segoe UI", Roboto,
-						 system-ui, -apple-system, BlinkMacSystemFont,
-						 "Helvetica Neue", Arial, sans-serif;
-	--font-sans-ui: system-ui, -apple-system, "Segoe UI", Roboto,
-					"Noto Sans JP", "Hiragino Sans", "Yu Gothic UI",
-					"Yu Gothic", "Meiryo", "Helvetica Neue", Arial, sans-serif;
 }
 
 *{ box-sizing: border-box; }

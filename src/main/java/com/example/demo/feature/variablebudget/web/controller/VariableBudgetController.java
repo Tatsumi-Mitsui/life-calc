@@ -2,6 +2,8 @@ package com.example.demo.feature.variablebudget.web.controller;
 
 import jakarta.validation.Valid;
 
+import java.util.Collections;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -48,7 +50,18 @@ public class VariableBudgetController {
             form = new VariableBudgetForm();
             model.addAttribute("form", form);
         }
-        model.addAttribute("histories", historyService.recentByUser(form.getUserId(),5));
+
+        try {
+            Long uid = form.getUserId();
+            if (uid != null) {
+                model.addAttribute("histories", historyService.recentByUser(uid, 5));
+            } else {
+                model.addAttribute("histories", Collections.emptyList());
+            }
+        } catch (Exception ex) {
+            // ここに来た場合 service 側で未ログイン → 例外 → リダイレクト系の動きが濃厚
+            model.addAttribute("histories", Collections.emptyList());
+        }
         return "variablebudget/variableBudget";
     }
 

@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,11 +27,12 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 // 静的と公開ページ
                 .requestMatchers(
-                    "/",                    // ホーム（後で作る）
-                    "/variablebudget/**",               // 変動費計算
-                    "/auth/**",                         // ログイン/サインアップ画面
+                    "/",                                // ホーム（後で作る）
+                    "/variablebudget","/variablebudget/**",         // 変動費計算
+                    "/auth/**",                                     // ログイン/サインアップ画面
                     "/css/**", "/js/**", "/images/**", "/webjars/**",
-                    "/h2-console/**"            // dev用H2
+                    "/h2-console/**",                                // dev用H2
+                    "/error", "/favicon.ico"
                     ).permitAll()
                     // それ以外は要ログイン
                     .anyRequest().authenticated()
@@ -55,9 +55,7 @@ public class SecurityConfig {
             )
             // H2 Console 用
             .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"))
-            .headers(h -> h.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
-            // DaoAuthenticationProvider を明示設定
-            .authenticationProvider(daoAuthProvider());
+            .headers(h -> h.frameOptions(f -> f.sameOrigin()));
 
         return http.build();
     }

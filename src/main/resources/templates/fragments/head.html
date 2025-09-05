@@ -1,22 +1,25 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="ja">
-<head th:fragment="siteHead(title, pageCss, extraJs)">
+<head th:fragment="siteHead(title, extraCss, extraJs)">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- タイトル方針： pageTitle があれば「ページ名 - かんたん家計計算」、なければ固定 -->
-    <title th:text="${title} != null ? title + ' - かんたん家計計算' : 'かんたん家計計算'">かんたん家計計算</title>
+    <title th:text="${title} != null ? ${title} + ' - かんたん家計計算' : 'かんたん家計計算'">かんたん家計計算</title>
 
     <!-- 共通CSS -->
     <link rel="stylesheet" th:href="@{/css/common.css}">
 
-    <!-- ページ固有CSS（配列で受け取ってループ） -->
-    <link th:each="href : ${extraCss}" rel="stylesheet" th:href="${href}">
+    <!-- ページ固有CSS：extraCss が null なら何も出さない -->
+    <th:block th:if="${extraCss != null}">
+        <link th:each="href : ${extraCss}" rel="stylesheet" th:href="${href}">
+    </th:block>
 
     <!-- 共通：Font Awesome -->
     <script src="https://kit.fontawesome.com/3ab9590540.js" crossorigin="anonymous"></script>
 
-    <!-- ページ固有JS（配列で受け取ってループ） -->
-    <script th:each="src : ${extraJs}" th:src="${src}" defer></script>
+    <!-- ページ固有JS：extraJs が nullなら何も出さない -->
+    <th:block th:if="${extraJs != null}">
+        <script th:each="src : ${extraJs}" th:src="${src}" defer></script>
+    </th:block>
+
+    <link rel="icon" th:href="@{/favicon.ico}">
 </head>
-</html>

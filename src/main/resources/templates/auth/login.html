@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html lang="ja" xlms:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/head :: siteHead('ログイン', ${#lists.emptyList()}, ${#lists.emptyList()})}"></head>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: siteHead('ログイン', ${null}, ${null})}"></head>
 
 <body>
     <!-- 共通ヘッダー -->
-    <header th:replace="~{fragments/header :: siteHeader}"></header>
+    <header class="auth-header">
+        <h1 class="logo">かんたん家計計算</h1>
+    </header>
 
     <main>
         <section class="auth-pane">
@@ -43,6 +45,8 @@
     </main>
 
     <!-- 共通フッター -->
-    <footer th:replace="~{fragments/footer :: siteFooter}"></footer>
+    <footer class="auth-footer">
+        <p>Copyright&copy; かんたん家計計算 All Rights Reserved.</p>
+    </footer>
 </body>
 </html>

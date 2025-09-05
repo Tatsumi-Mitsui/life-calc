@@ -31,8 +31,8 @@
             </th:block>
     
             <th:block sec:authorize="!isAuthenticated()">
-                <a th:href="@{/login}" class="link">ログイン</a>
-                <a th:href="@{/signup}" class="link">サインアップ</a>
+                <a th:href="@{/auth/login}" class="link">ログイン</a>
+                <a th:href="@{/auth/signup}" class="link">サインアップ</a>
             </th:block>
         </div>
     </div>
