@@ -1,0 +1,130 @@
+@charset "UTF-8";
+
+/* ===== 入力フォーム共通 ===== */
+form {
+    background: transparent;
+}
+
+.input-block {
+    margin: 16px 0;
+}
+
+.input-block > label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+.input-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.input-row > span {
+    color: var(--ink);
+    font-weight: 700;
+}
+
+/* 入力欄 */
+.input-row input[type="number"],
+.input-row input[type="text"] {
+    width: 100%;
+    max-width: 520px;
+    font-size: var(--fs-md);
+    padding: 10px 16px;
+    line-height: 1.6;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--white);
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--positive);
+    box-shadow: 0 0 0 2px rgba(45, 108, 223, 0.15);
+}
+
+.input-row input::placeholder {
+    color: #aaa;
+    font-style: italic;
+    margin-right: 1%;
+}
+
+/* numberのスピナーを消す */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+/* バリデーション */
+.field-error {
+    color: var(--negative); 
+    font-size: var(--fs-xs);
+    margin-top: 6px;
+}
+
+/* ===== ボタン行 ===== */
+.actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-top: 24px;
+}
+
+.actions .submit-btn,
+.actions .save-btn {
+    appearance: none;
+    border: none;
+    cursor: pointer;
+    border-radius: 12px;
+    padding: 12px 18px;
+    font-size: var(--fs-md);
+    font-weight: 600;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
+    min-width: 120px;
+}
+
+.actions .submit-btn {
+    background: #66cc00;
+    color: var(--white);
+}
+
+.actions .submit-btn:hover {
+    filter: brightness(0.95);
+}
+
+.actions .save-btn {
+    background: #2563eb;
+    color: var(--white);
+}
+
+.actions .save-btn:hover {
+    filter: brightness(0.96);
+}
+
+/* 履歴の横幅制限を外して全幅に */
+.history-pane {
+    max-width: none;
+}
+
+/* モバイルで縦積み */
+@media (max-width: 1200px) {    /* = bp-stack */
+	.page-grid {
+		grid-template-columns: 1fr;
+        gap: 24px;
+	}
+
+    .main-pane, .history-pane {
+        padding-inline: 0;
+    }
+}

@@ -1,0 +1,181 @@
+@charset "UTF-8";
+
+/* タイトル・説明部分 */
+.main-pane .intro {
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 24px;
+}
+
+.main-pane .intro h2,
+.main-pane .intro .description {
+    text-align: left;
+}
+
+/* ===== 入力列の中央寄せ（計算エリア） ===== */
+.main-pane form#calc-form .input-block,
+.main-pane form#calc-form .add-button-wrapper {
+    max-width: 520px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* ===== 固定費の追加 / 削除ボタン ===== */
+#calc-form .add-button-wrapper {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.add-button-wrapper {
+    margin: 10px 0;
+}
+
+.add-btn, .delete-btn {
+    appearance: none;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    line-height: 1;
+    padding: 6px;
+    border-radius: 999px;
+}
+
+.add-btn i, .add-btn svg, .icon-plus {
+    font-size: 28px;
+    color: #0099ff !important;
+}
+
+.input-row .delete-btn {
+    align-self: center;
+    margin-left: 8px;
+}
+
+.delete-btn i, .delete-btn svg, .icon-minus {
+    font-size: 22px;
+    color: var(--negative) !important;
+}
+
+/* ===== 結果パネル ===== */
+.result-area {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 16px 18px;
+    background: var(--white);
+    margin-top: 30px;
+    max-width: 520px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.result-area h3 {
+    margin: 0 0 1.5em;
+}
+
+.result-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 0 0 0.8em;
+}
+
+.result-row > span:first-child {
+    white-space: nowrap;
+}
+
+.result-row .value {
+    min-width: 10ch;
+    text-align: right;
+    padding-left: 2em;
+    font-size: var(--fs-lg);
+    font-variant-numeric: tabular-nums;
+}
+
+.result-row .value.positive, .result-row .value.positive *{
+    color: var(--positive);
+}
+
+.result-row .value.negative, .result-row .value.negative *{
+    color: var(--negative);
+}
+
+/* ===== 履歴 ===== */
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin: 4px 0 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+}
+
+.csv-placeholder {
+    min-height: 32px;
+}
+
+.history-list {
+    display: grid;
+    gap: 12px;
+}
+
+.history-card {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 12px 14px;
+    background: var(--white);
+}
+
+.history-card .row {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 4px 0;
+}
+
+.history-card .row span:first-child {
+    color: var(--muted);
+    white-space: nowrap;
+    flex: 0 0 auto;
+}
+
+.history-card .row span:last-child {
+    flex: 1 1 auto;
+    text-align: right;
+    min-width: 8ch;
+    font-variant-numeric: tabular-nums;
+}
+
+.history-card .row.result .num,
+.history-card .row.result .num *{
+    color: var(--positive);
+    font-weight: 600;
+}
+
+.history-card .row.result .num.negative,
+.history-card .row.result .num.negative *{
+    color: var(--negative);
+}
+
+.history-card form .delete-btn {
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: var(--muted);
+    text-decoration: underline;
+    font-size: 1.05rem;
+}
+
+.history-card form .delete-btn:hover {
+    color: #0b57d0;
+    filter: none;
+}
+
+/* 超狭幅の微調整 */
+@media (max-width: 480px) {
+    .input-row input[type="text"],
+    .input-row input[type="number"] {
+        width: 100%;
+    }
+}

@@ -6,20 +6,23 @@
     <title th:text="${title} != null ? ${title} + ' - かんたん家計計算' : 'かんたん家計計算'">かんたん家計計算</title>
 
     <!-- 共通CSS -->
-    <link rel="stylesheet" th:href="@{/css/common.css}">
+    <link rel="stylesheet" th:href="@{/css/common/common.css(v=3)}">
+    <link rel="stylesheet" th:href="@{/css/components/components.css(v=3)}">
 
     <!-- ページ固有CSS：extraCss が null なら何も出さない -->
-    <th:block th:if="${extraCss != null}">
-        <link th:each="href : ${extraCss}" rel="stylesheet" th:href="${href}">
+    <th:block th:each="href : ${extraCss}">
+        <link rel="stylesheet" th:href="${href + '?v=3'}">
     </th:block>
 
     <!-- 共通：Font Awesome -->
-    <script src="https://kit.fontawesome.com/3ab9590540.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+          integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+          crossorigin="anonymous"
+          referrerpolicy="no-referrer" />
 
     <!-- ページ固有JS：extraJs が nullなら何も出さない -->
-    <th:block th:if="${extraJs != null}">
-        <script th:each="src : ${extraJs}" th:src="${src}" defer></script>
+    <th:block th:each="src : ${extraJs}">
+        <script th:src="${src + '?v=3'}" defer></script>
     </th:block>
-
-    <link rel="icon" th:href="@{/favicon.ico}">
 </head>

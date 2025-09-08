@@ -15,22 +15,35 @@
 	
     /* フォント */
 	--font-sans-rounded: "Hiragino Maru Gothic ProN", "ヒラギノ丸ゴ ProN W4",
-	"Hiragino Sans", "ヒラギノ角ゴ ProN W3",
-	"Noto Sans JP", "Yu Gothic", "Yu Gothic UI",
-	"Meiryo", "Segoe UI", Roboto,
-	system-ui, -apple-system, BlinkMacSystemFont,
-	"Helvetica Neue", Arial, sans-serif;
+						 "Hiragino Sans", "ヒラギノ角ゴ ProN W3",
+						 "Noto Sans JP", "Yu Gothic", "Yu Gothic UI",
+						 "Meiryo", "Segoe UI", Roboto,
+						 system-ui, -apple-system, BlinkMacSystemFont,
+						 "Helvetica Neue", Arial, sans-serif;
+
 	--font-sans-ui: system-ui, -apple-system, "Segoe UI", Roboto,
-	"Noto Sans JP", "Hiragino Sans", "Yu Gothic UI",
-	"Yu Gothic", "Meiryo", "Helvetica Neue", Arial, sans-serif;
+					"Noto Sans JP", "Hiragino Sans", "Yu Gothic UI",
+					"Yu Gothic", "Meiryo", "Helvetica Neue", Arial, sans-serif;
+
+	/* ===== タイプスケール（rem） ===== */
+	--fs-xs: 0.8rem;		/* ~14.4px */
+	--fs-sm: 0.9rem;		/* ~16.2px */
+	--fs-md: 1rem;		/* ~18px 基準 */
+	--fs-lg: 1.1rem;		/* ~19.8px */
+	--fs-xl: 1.3rem;		/* ~23.4px */
+	--fs-2xl: 1.5rem;		/* ~27px */
 
 	/* 基準サイズ */
-	--content-max: 1040px;
+	--content-max: 1040px;	/* コンテンツ上限 */
+	--bp-stack: 1100px;		/* 切り替え閾値 */
 	--header-min: 56px;		/* モバイルでも44px超える安全圏 */
 	--header-max: 80px;		/* ややゆったり */
 }
 
-*{ box-sizing: border-box; }
+*,*::before,*::after {
+	box-sizing: border-box;
+}
+
 html,body {
 	height: 100%;
 }
@@ -53,12 +66,6 @@ body .use-ui-font {
 	font-family: var(--font-sans-ui);
 }
 
-.container {
-    max-width: var(--content-max);
-    margin: 0 auto;
-    padding: 0 16px;
-}
-
 /* ===== ヘッダー ===== */
 /* ヘッダー常時上固定 + 下境界をうっすら */
 header {
@@ -70,117 +77,139 @@ header {
 	color: var(--header-fg);
 }
 
-/* 中央寄せコンテナ + 3カラム（左 / 中央 / 右） */ 
+/* ヘッダー内部：中央寄せコンテナ + 3カラム（左 / 中央 / 右） */ 
 header .inner.header-grid {
 	margin: 0 auto;
 	padding: 0 20px;
 	min-height: clamp(var(--header-min), 6vw, var(--header-max));
 	display: grid;
-	grid-template-columns: 1fr auto 1fr;
+	grid-template-columns: auto 1fr auto;
 	align-items: center;
 	gap: 16px;
 }
 
-/* 左：メニューは左寄せ、リンク間に余白 */
-header .menu {
-	grid-column: 1;
-	justify-self: start;
-	display: flex;
-	align-items: center;
-	gap: 14px;
-	padding-left: 12px;
-	flex-wrap: wrap;
-}
-
-header .menu .link[aria-current="page"] {
-	text-decoration: underline;
-	text-underline-offset: 3px;
-	background: rgba(255, 255, 255, 0.08);
-	border-radius: 6px;
-}
-
-/* 中央：ロゴは常にセンター */
+/* ヘッダー左：ロゴ */
 header .logo {
-	grid-column: 2;
-	justify-self: center;
+	justify-self: start;
+	font-family: var(--font-sans-rounded);
+	font-weight: 700;
+	font-size: clamp(20px, 2.2vw, 28px);
 	color: var(--header-fg);
 	text-decoration: none;
-	font-weight: 700;
-	/* 画面幅に応じてロゴを少しだけ可変 */
-	font-size: clamp(22px, 2.2vw, 28px);
 	letter-spacing: 0.02em;
 	line-height: 1;
+	white-space: nowrap;
 }
 
-/* 右：認証は右寄せ、間隔しっかり */
-header .auth {
-	grid-column: 3;
+/* ヘッダー右：認証 + ハンバーガーメニュー */
+header .right-area {
 	justify-self: end;
 	display: flex;
 	align-items: center;
-	gap: 20px;			/* ログインとサインアップの間隔はここで調整 */
-	padding-right: 20px;
-	flex-wrap: wrap;	/* ユーザー名が長くても崩れにくい */
+	gap: 16px;
+	white-space: nowrap;
 }
 
-/* 共通リンク */
-header .link,
-header .link-btn,
-header .menu .link {
-	padding: 10px 12px ;
+/* 認証エリア */
+header .auth {
+	display: flex;
+	align-items: center;
+	gap: 10px;
 }
 
-header .link,
-header .link-btn {
+header .auth .auth-link,
+header .auth .auth-user {
+	/* 画面幅に応じて縮む */
+	font-size: clamp(14px, 1.6vw, 18px);
+	font-weight: 600;
 	color: var(--header-fg);
 	text-decoration: none;
-	font-weight: 600;
-	/* タップしやすさを担保（44px目安） */
+	padding: 6px 8px;
 	line-height: 1;
-	border-radius: 6px;
-	transition: opacity 0.15s, text-decpration-color 0.15s;
 }
 
-header .link:hover,
-header .link-btn:hover {
+header .auth .auth-link:hover {
 	text-decoration: underline;
 	text-underline-offset: 3px;
+	color: #eaffea;
 }
 
-/* ボタンをリンク風に */
-header .link-btn {
+/* ハンバーガー */
+header .hamburger {
 	background: transparent;
 	border: 0;
 	cursor: pointer;
-	font: inherit;
-	padding-inline: 10px;
+	font-size: 28px;
+	color: var(--header-fg);
+	padding: 8px;
+	line-height: 1;
+	border-radius: 8px;
 }
 
-header .hello {
-	opacity: 0.9;
-	padding: 6px 0;
+header .hamburger:hover {
+	background: rgba(255, 255, 255, 0.10);
 }
 
 /* ===== フッター ===== */
-.site-footer {
-    margin-top: 40px;
-    padding: 24px 12px;
-    text-align: center;
-    color: var(--muted);
+footer {
+	background: var(--brand);
+	color: var(--white);
+	text-align: center;
+	padding: 14px 12px;
+	margin-top: 32px;
+	font-size: var(--fs-sm);
 }
 
-/* ===== モバイル ===== */
-@media (max-width: 480px) {
-    header .inner.header-grid {
+/* ===== タイトル ===== */
+h2 {
+	margin: 20px 0 8px;
+	font-size: var(--fs-xl);
+}
+
+.description {
+	color: var(--muted);
+	margin: 0 0 16px;
+}
+
+/* ===== 2カラム骨格（共通化） ===== */
+.page-grid {
+	max-width: clamp(960px, 96vw, 1280px);
+	margin: 0 auto;
+	padding: 24px 24px;
+	display: grid;
+	grid-template-columns: 11fr 4fr;
+	gap: 24px;
+	align-items: start;
+}
+
+.main-pane {
+	min-width: 360px;
+}
+
+/* 細かい調整（共有） */
+.icon-plus, .icon-minus {
+	vertical-align: middle;
+}
+
+/* 狭幅時の微調整（リンク折り返しはしない / 余白とサイズを少し詰める） */
+@media (max-width: 560px) {
+	header .inner.header-grid {
 		padding: 0 12px;
-		column-gap: 12px;
-	}
-
-	header .menu {
-		gap: 10px;
-	}
-
-	header .auth {
 		gap: 12px;
+	}
+
+	header .right-area {
+		gap: 12px;
+	}
+
+	header .auth .auth-link,
+	header .auth .auth-user {
+		font-size: clamp(13px, 3.4vw, 16px);
+		padding: 6px 6px;
+	}
+
+	header .hamburger {
+		font-size: 26px;
+		padding: 6px;
 	}
 }

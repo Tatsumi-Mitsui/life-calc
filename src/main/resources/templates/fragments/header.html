@@ -5,35 +5,27 @@
 <body th:fragment="siteHeader">
 <header>
     <div class="inner header-grid">
-        <!-- 左：メニュー（他の計算ページ用）※ダミー -->
-        <nav class="menu" area-label="Main">
-            <!--
-            <a class="link" th:href="@{/}" area-current="page">ホーム</a>
-            <a class="link" th:href="@{/variablebudget}">変動費計算</a>
-            -->
-        </nav>
-
-        <!-- 中央：ロゴ（常に中央） -->
-        <a class="logo" th:href="@{/}">かんたん家計計算</a>
+        <!-- 左：ロゴ -->
+        <a class="logo" th:href="@{/variablebudget}">かんたん家計計算</a>
 
         <!-- 右：認証エリア（ログインしているかで出し分け） -->
-        <div class="auth">
-            <!-- ログイン済み -->
-            <th:block sec:authorize="isAuthenticated()">
-                <span class="hello">
-                    ようこそ、
-                    <b th:text="${#authentication.principal.displayName} ?: ${#authentication.name}">ユーザー</b>
+        <div class="right-area">
+            <nav class="auth">
+                <!-- 未ログイン時 -->
+                <a class="auth-link"
+                   th:href="@{/auth/login}"
+                   sec:authorize="!isAuthenticated()">ログイン</a>
+            
+                <!-- ログイン時 -->
+                <span class="auth-user" sec:authorize="isAuthenticated()">
+                    こんにちは、<span sec:authentication="name">ユーザー</span>
                 </span>
-                <form th:action="@{/logout}" method="post">
-                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                    <button type="submit" class="link-btn">ログアウト</button>
-                </form>
-            </th:block>
-    
-            <th:block sec:authorize="!isAuthenticated()">
-                <a th:href="@{/auth/login}" class="link">ログイン</a>
-                <a th:href="@{/auth/signup}" class="link">サインアップ</a>
-            </th:block>
+            </nav>
+
+            <!-- ハンバーガーメニュー -->
+            <button class="hamburger" aria-label="メニュー">
+                <i class="fa-solid fa-bars"></i>
+            </button>
         </div>
     </div>
 </header>

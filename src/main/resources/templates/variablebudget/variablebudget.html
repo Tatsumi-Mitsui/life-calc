@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="ja" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/head :: siteHead(${pageTitle}, ${ {} }, ${ {'/js/pages/variableBudget.js'} })}"></head>
+<head th:replace="~{fragments/head :: siteHead(
+	'変動費計算',
+	${{'/css/pages/variablebudget.css'}},
+	${{'/js/pages/variableBudget.js'}}
+)}"></head>
 
 <body>
 	<!-- ヘッダー：タイトル/ログイン導線 -->
@@ -11,8 +15,10 @@
 
 		<!-- 中央：メイン（計算） -->
 		<section class="main-pane">
-			<h2>変動費</h2>
-			<p class="description">収入（手取り）と固定費の合計額の差により、使うことのできる変動費の目安を算出します。</p>
+			<div class="intro">
+				<h2>変動費</h2>
+				<p class="description">収入（手取り）と固定費の合計額の差により、使うことのできる変動費の目安を算出します。</p>
+			</div>
 	
 			<!-- 計算フォーム：/calc にPOST。 -->
 			<form id="calc-form" th:action="@{/variablebudget/calc}" method="post" th:object="${form}">
@@ -89,7 +95,7 @@
 				<!-- 追加ボタン -->
 				<div class="add-button-wrapper">
 					<button type="button" id="add-fixed" class="add-btn" onclick="addCost()">
-						<i class="fa-solid fa-circle-plus icon-plus"></i>
+						<i class="fa-solid fa-circle-plus icon-plus" aria-hidden="true"></i>
 					</button>
 				</div>
 			</form>
