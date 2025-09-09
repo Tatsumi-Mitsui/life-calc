@@ -1,5 +1,116 @@
 @charset "UTF-8";
 
+/* ドロワー先頭バー */
+.drawer-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: -4px 0 4px;
+}
+
+.drawer-top-title {
+    font-weight: 700;
+    font-size: var(--fs-md);
+}
+
+/* × ボタン */
+.drawer-close {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    padding: 8px;
+    line-height: 1;
+    border-radius: 10px;
+}
+
+.drawer-close i {
+    font-size: 22px;
+}
+
+/* ===== ドロワー内：ユーザー情報カード ===== */
+.drawer-card {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 12px 14px;
+    background: var(--white);
+    display: grid;
+    gap: 10px;
+}
+
+.drawer-card .card-title {
+    font-weight: 700;
+    font-size: var(--fs-md);
+    margin-bottom: 2px;
+}
+
+.drawer-card .card-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.drawer-card .card-row .label {
+    color: var(--muted);
+    white-space: nowrap;
+}
+
+.drawer-card .card-row .value {
+    font-weight: 600;
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.drawer-card .card-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 4px;
+}
+
+.drawer-card .btn-logout {
+    display: inline-block;
+    text-decoration: none;
+    color: var(--white);
+    background: #ef4444;
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-weight: 700;
+}
+
+.drawer-card .btn-logout:hover {
+    filter: brightness(0.95);
+}
+
+/* ドロワー内：セクション見出しとリンク群 */
+.drawer-section .section-title {
+    font-weight: 700;
+    color: var(--muted);
+    font-size: var(--fs-sm);
+    padding: 2px 2px 6px;
+}
+
+.drawer .drawer-link {
+    display: block;
+    padding: 12px 10px;
+    border-radius: 8px;
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.drawer .drawer-link:hover {
+    background: #f4f6f8;
+}
+
+/* 既存ドロワーのレイアウトを少しゆったり */
+.drawer .drawer-content {
+    gap: 12px;
+    padding: 16px;
+}
+
 /* ===== 入力フォーム共通 ===== */
 form {
     background: transparent;

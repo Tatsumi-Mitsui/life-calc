@@ -1,33 +1,61 @@
 <!DOCTYPE html>
 <html lang="ja"
       xmlns:th="http://www.thymeleaf.org"
-      xmlns="https://www.thymeleaf.org/extras/spring-security">
-<body th:fragment="siteHeader">
-<header>
+      xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
+<body>
+<header th:fragment="siteHeader">
     <div class="inner header-grid">
         <!-- 左：ロゴ -->
-        <a class="logo" th:href="@{/variablebudget}">かんたん家計計算</a>
+        <div class="logo">
+            <a th:href="@{/variablebudget}">かんたん家計計算</a>
+        </div>
 
-        <!-- 右：認証エリア（ログインしているかで出し分け） -->
-        <div class="right-area">
-            <nav class="auth">
-                <!-- 未ログイン時 -->
-                <a class="auth-link"
-                   th:href="@{/auth/login}"
-                   sec:authorize="!isAuthenticated()">ログイン</a>
-            
-                <!-- ログイン時 -->
-                <span class="auth-user" sec:authorize="isAuthenticated()">
-                    こんにちは、<span sec:authentication="name">ユーザー</span>
-                </span>
-            </nav>
+        <!-- 右：認証エリア（未ログイン時） + ハンバーガーメニュー -->
+        <div class="nav-actions">
+            <!-- 未ログイン時（ログインリンクを表示） -->
+            <a class="login-link" sec:authorize="isAnonymous()" th:href="@{/auth/login}">ログイン</a>
 
-            <!-- ハンバーガーメニュー -->
-            <button class="hamburger" aria-label="メニュー">
+            <!-- ハンバーガーボタン -->
+            <button class="menu-btn" id="menu-toggle" aria-label="メニュー"
+                    aria-controls="drawer" aria-expanded="false">
                 <i class="fa-solid fa-bars"></i>
             </button>
         </div>
     </div>
+
+    <!-- ドロワーメニュー -->
+    <nav class="drawer" id="drawer" area-hidden="true">
+        <div class="drawer-content">
+
+            <div class="drawer-top">
+                <span class="drawer-top-title">メニュー</span>
+                <button class="drawer-close" id="menu-close" aria-label="メニューを閉じる">
+                    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                </button>
+            </div>
+
+            <!-- ログイン時：ユーザー情報カード -->
+            <section sec:authorize="isAuthenticated()" class="drawer-card">
+                <div class="card-title">アカウント</div>
+                <div class="card-row">
+                    <span class="label">ユーザー名</span>
+                    <span class="value" th:text="${#authentication.name}">user</span>
+                </div>
+                <div class="card-actions">
+                    <a class="drawer-link" th:href="@{/logout}">ログアウト</a>
+                </div>
+            </section>
+
+            <hr>
+
+            <section class="drawer-section">
+                <div class="section-title">計算ツール</div>
+                <a th:href="@{/variablebudget}" class="drawer-link">変動費計算</a>
+                <!-- 今後の計算画面リンクをここに追加 -->
+            </section>
+            
+        </div>
+    </nav>
 </header>
 </body>
 </html>

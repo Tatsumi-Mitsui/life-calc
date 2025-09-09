@@ -1,0 +1,120 @@
+@charset "UTF-8";
+
+/* 画面全体で中央寄せ */
+.auth-page .auth-layout {
+    min-height: 75dvh; /* モバイルのアドレスバー考慮 */
+    display: grid;
+    place-items: center;
+    padding: 24px;
+}
+
+header .logo {
+    color: var(--header-fg);
+    text-decoration: none;
+    font-weight: 800;
+    font-size: clamp(22px, 2.2vw, 28px);
+    letter-spacing: 0.02em;
+    line-height: 1;
+}
+
+/* カード本体 */
+.auth-card {
+    width: min(560px,92vw);
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    padding: 28px 24px;
+}
+
+.auth-title {
+    margin: 0 0 16px;
+    font-size: var(--fs-xl);
+}
+
+/* メッセージ */
+.auth-msg {
+    margin: 6px 0 14px;
+    font-size: var(--fs-sm);
+}
+
+.auth-msg.ok {
+    color: #1a7f37;
+}
+
+.auth-msg.error {
+    color: var(--negative);
+}
+
+/* フォーム */
+.auth-form {
+    display: grid;
+    gap: 14px;
+}
+
+.field {
+    margin: 6px 0;
+}
+
+.field > label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+/* 入力欄 */
+.field input[type="text"],
+.field input[type="email"],
+.field input[type="password"] {
+    width: 100%;
+    font-size: var(--fs-md);
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--white);
+    text-align: left;
+}
+
+.field input:focus {
+    outline: none;
+    border-color: var(positive);
+    box-shadow: 0 0 0 3px rgba(45, 108, 223, 0.15);
+}
+
+/* バリデーション */
+.field-error {
+    color: var(--negative);
+    font-size: var(--fs-xs);
+    margin-top: 6px;
+}
+
+/* 送信ボタン */
+.auth-submit {
+    appearance: none;
+    border: none;
+    cursor: pointer;
+    border-radius: 12px;
+    padding: 12px 18px;
+    font-size: var(--fs-md);
+    font-weight: 700;
+    color: #fff;
+    background: #2563eb;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
+}
+
+.auth-submit:hover {
+    filter: brightness(0.96);
+}
+
+/* 補助リンク */
+.auth-links {
+    margin-top: 8px;
+    text-align: right;
+}
+
+.auth-links a {
+    font-size: var(--fs-sm);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+

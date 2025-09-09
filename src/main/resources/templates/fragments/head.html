@@ -6,12 +6,12 @@
     <title th:text="${title} != null ? ${title} + ' - かんたん家計計算' : 'かんたん家計計算'">かんたん家計計算</title>
 
     <!-- 共通CSS -->
-    <link rel="stylesheet" th:href="@{/css/common/common.css(v=3)}">
-    <link rel="stylesheet" th:href="@{/css/components/components.css(v=3)}">
+    <link rel="stylesheet" th:href="@{/css/common/common.css(v=1)}">
+    <link rel="stylesheet" th:href="@{/css/components/components.css(v=1)}">
 
     <!-- ページ固有CSS：extraCss が null なら何も出さない -->
     <th:block th:each="href : ${extraCss}">
-        <link rel="stylesheet" th:href="${href + '?v=3'}">
+        <link rel="stylesheet" th:href="${href + '?v=1'}">
     </th:block>
 
     <!-- 共通：Font Awesome -->
@@ -21,8 +21,11 @@
           crossorigin="anonymous"
           referrerpolicy="no-referrer" />
 
+    <!-- 共通JS -->
+    <script th:src="@{/js/common/menu.js(v=1)}" defer></script>
+
     <!-- ページ固有JS：extraJs が nullなら何も出さない -->
     <th:block th:each="src : ${extraJs}">
-        <script th:src="${src + '?v=3'}" defer></script>
+        <script th:src="${src + '?v=1'}" defer></script>
     </th:block>
 </head>

@@ -42,13 +42,13 @@ public class SecurityConfig {
                 .loginProcessingUrl("/auth/login")              // POST 認証エンドポイント
                 .usernameParameter("email")                 // <input name="email">
                 .passwordParameter("password")              // <input name="password">
-                // 直前にブロックされたURLがあれば /auth/login へ、なければ "/" へ
+                // 直前にブロックされたURLがあればそのURLへ、なければ "/" へ
                 .defaultSuccessUrl("/variablebudget", false)
                 .permitAll()
             )
             .logout(logout -> logout
                 .logoutUrl("/logout")
-                .logoutSuccessUrl("/")
+                .logoutSuccessUrl("/variablebudget?logout")
                 .deleteCookies("JSESSIONID")
                 .invalidateHttpSession(true)
                 .permitAll()

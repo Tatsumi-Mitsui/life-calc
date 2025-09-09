@@ -67,87 +67,117 @@ body .use-ui-font {
 }
 
 /* ===== ヘッダー ===== */
-/* ヘッダー常時上固定 + 下境界をうっすら */
 header {
 	position: sticky;
 	top: 0;
 	z-index: 1000;
-	box-shadow: 0 1px 0 rgba(255, 255, 255, 0.15) inset, 0 1px 6px rgba(0, 0, 0, 0.06);
 	background: var(--brand);
 	color: var(--header-fg);
+	box-shadow:0 1px 4px rgba(0, 0, 0, 0.08);
 }
 
-/* ヘッダー内部：中央寄せコンテナ + 3カラム（左 / 中央 / 右） */ 
-header .inner.header-grid {
+/* ヘッダー内部 */ 
+header .header-grid {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 	margin: 0 auto;
 	padding: 0 20px;
 	min-height: clamp(var(--header-min), 6vw, var(--header-max));
-	display: grid;
-	grid-template-columns: auto 1fr auto;
-	align-items: center;
-	gap: 16px;
 }
 
 /* ヘッダー左：ロゴ */
-header .logo {
-	justify-self: start;
+header .logo a {
+	font-size: clamp(22px, 2.2vw, 28px);
+	font-weight: 800;
 	font-family: var(--font-sans-rounded);
-	font-weight: 700;
-	font-size: clamp(20px, 2.2vw, 28px);
 	color: var(--header-fg);
 	text-decoration: none;
 	letter-spacing: 0.02em;
 	line-height: 1;
-	white-space: nowrap;
 }
 
-/* ヘッダー右：認証 + ハンバーガーメニュー */
-header .right-area {
-	justify-self: end;
+/* ヘッダー右端：認証 + ハンバーガーメニュー */
+.nav-actions {
 	display: flex;
 	align-items: center;
 	gap: 16px;
+}
+
+.login-link {
+	font-size: clamp(14px, 1.4vw, 18px);
+	font-weight: 700;
+	color: var(--header-fg);
+	text-decoration: none;
 	white-space: nowrap;
 }
 
-/* 認証エリア */
-header .auth {
-	display: flex;
-	align-items: center;
-	gap: 10px;
-}
-
-header .auth .auth-link,
-header .auth .auth-user {
-	/* 画面幅に応じて縮む */
-	font-size: clamp(14px, 1.6vw, 18px);
-	font-weight: 600;
-	color: var(--header-fg);
-	text-decoration: none;
-	padding: 6px 8px;
-	line-height: 1;
-}
-
-header .auth .auth-link:hover {
+.login-link:hover {
 	text-decoration: underline;
-	text-underline-offset: 3px;
-	color: #eaffea;
 }
 
-/* ハンバーガー */
-header .hamburger {
-	background: transparent;
-	border: 0;
-	cursor: pointer;
-	font-size: 28px;
+/* ハンバーガーボタン */
+.menu-btn {
+	background: none;
+	border: none;
 	color: var(--header-fg);
-	padding: 8px;
-	line-height: 1;
-	border-radius: 8px;
+	font-size: 1.8rem;
+	cursor: pointer;
+	padding: 6px 8px;
 }
 
-header .hamburger:hover {
-	background: rgba(255, 255, 255, 0.10);
+/* ドロワーメニュー */
+.drawer {
+	position: fixed;
+	inset: 0 0 0 auto;					/* top: 0; right: 0; bottom: 0; */
+	width: 0;							/* 初期は非表示（クリック遮断） */
+	background: rgba(0, 0, 0, 0);		/* 透明なオーバーレイ */
+	transition: right 0.2s ease;
+	z-index: 2000;
+}
+
+.drawer.open {
+	width: 100%;						/* オーバーレイ有効化 */
+	background: rgba(0, 0, 0, 0.2);	/* 背景タップで閉じる */
+}
+
+.drawer-content {
+	position: absolute;
+	top: 0;
+	right: -280px;						/* 画面外から */
+	width: 280px;
+	height: 100%;
+	background: var(--white);
+	box-shadow: -2px 0 8px rgba(0, 0, 0, 0.2);
+	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	transition: right 0.25s ease;
+}
+
+.drawer.open .drawer-content {
+	right: 0;
+}
+
+.drawer-username {
+	font-weight: 700;
+	margin-bottom: 4px;
+}
+
+.drawer-link {
+	color: var(--ink);
+	text-decoration: none;
+	font-size: var(--fs-md);
+}
+
+.drawer-link:hover {
+	color: var(--brand);
+}
+
+/* モバイルのタップ余白 */
+.menu-btn, .login-link {
+	-webkit-tap-highlight-color: transparent;
 }
 
 /* ===== フッター ===== */
