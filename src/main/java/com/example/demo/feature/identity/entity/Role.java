@@ -1,9 +1,5 @@
 package com.example.demo.feature.identity.entity;
 
-import java.time.LocalDateTime;
-
-import org.hibernate.annotations.CreationTimestamp;
-
 import jakarta.persistence.*;
 
 /*
@@ -12,7 +8,7 @@ import jakarta.persistence.*;
  */
 
 @Entity
-@Table(name = "roles")
+@Table(name = "auth_role")
 public class Role {
     
     @Id
@@ -22,10 +18,6 @@ public class Role {
     // 例：ROLE_USER, ROLE_ADMIN
     @Column(nullable = false, unique = true, length = 50)
     private String name;    // "USER" or "ADMIN"
-
-    @CreationTimestamp
-    @Column(name = "saved_at", nullable = false, updatable = false)
-    private LocalDateTime savedAt;
 
     // ===== getter / setter =====
     public Long getId() {
@@ -40,12 +32,5 @@ public class Role {
     }
     public void setName(String name) {
         this.name = name;
-    }
-
-    public LocalDateTime getSavedAt() {
-        return savedAt;
-    }
-    public void setSavedAt(LocalDateTime savedAt) {
-        this.savedAt = savedAt;
     }
 }

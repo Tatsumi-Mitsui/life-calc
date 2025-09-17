@@ -56,14 +56,18 @@ public class AuthController {
             return "redirect:/variablebudget";  // 今後の拡張で "redirect:/"
         }
         
-        // 入力バリデーション
+        // パスワード一致チェック（field単位で出すなら confirmPassword に付ける）
+        if (!bindingResult.hasFieldErrors("password")
+            && !bindingResult.hasFieldErrors("confirmPassword")
+            && (form.getPassword() == null || !form.getPassword().equals(form.getConfirmPassword()))) {
+                bindingResult.rejectValue("confirmPassword", "mismatch", "パスワードが一致しません");
+            }
+
         if (bindingResult.hasErrors()) {
             return "auth/signup";
         }
 
         try {
-            // UserService 側は「生パスワード」を渡せば中でエンコードして保存する想定
-            // 既存のUserServiceのAPIに合わせて呼び出し名は変えてOK
             userService.register(form);
         } catch (IllegalArgumentException dup) {
             // 例：メール重複など

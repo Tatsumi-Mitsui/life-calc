@@ -1,3 +1,3 @@
 -- 初期ロール投入
-INSERT INTO roles (name) VALUES ('USER');
-INSERT INTO roles (name) VALUES ('ADMIN');
+INSERT INTO auth_role (name) VALUES ('ROLE_USER') ON CONFLICT (name) DO NOTHING;
+INSERT INTO auth_role (name) VALUES ('ROLE_ADMIN') ON CONFLICT (name) DO NOTHING;

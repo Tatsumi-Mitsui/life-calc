@@ -2,7 +2,7 @@ package com.example.demo.feature.variablebudget.repository;
 
 import org.springframework.stereotype.Repository;
 
-import com.example.demo.feature.variablebudget.web.dto.HistoryView;
+import com.example.demo.feature.variablebudget.dto.HistoryView;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

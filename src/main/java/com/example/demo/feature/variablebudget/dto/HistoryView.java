@@ -1,4 +1,4 @@
-package com.example.demo.feature.variablebudget.web.dto;
+package com.example.demo.feature.variablebudget.dto;
 
 import java.time.LocalDateTime;
 import java.util.List;

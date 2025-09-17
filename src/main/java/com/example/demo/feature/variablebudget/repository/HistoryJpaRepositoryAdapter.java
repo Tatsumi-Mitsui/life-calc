@@ -4,9 +4,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.demo.feature.variablebudget.dto.HistoryView;
 import com.example.demo.feature.variablebudget.entity.HistoryEntry;
 import com.example.demo.feature.variablebudget.entity.HistoryItem;
-import com.example.demo.feature.variablebudget.web.dto.HistoryView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +23,9 @@ public class HistoryJpaRepositoryAdapter implements HistoryRepository {
     @Override
     @Transactional
     public Long save(HistoryView v) {
+        if (v.getUserId() == null || v.getUserId() == 0L) {
+            throw new IllegalArgumentException("未ログインユーザーはJPA保存できません");
+        }
         // DTO → Entity
         HistoryEntry e = new HistoryEntry();
         Long userId = (v.getUserId() == null) ? 0L : v.getUserId();
@@ -31,7 +34,7 @@ public class HistoryJpaRepositoryAdapter implements HistoryRepository {
         e.setIncome(nz(v.getIncome()));
         e.setFixedCostTotal(nz(v.getFixedCostTotal()));
         e.setResultVariable(nz(v.getResultVariable()));
-        // savedAt はエンティティの @PrePersist に任せてもOK（DTOでセット済みならそのまま）
+        e.setSavedAt(v.getSavedAt());
 
         // 明細をぶら下げ
         List<Long> fixeds = (v.getFixedCosts() == null) ? List.of() : v.getFixedCosts();

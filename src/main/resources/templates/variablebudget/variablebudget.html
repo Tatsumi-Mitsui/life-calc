@@ -8,7 +8,7 @@
 
 <body>
 	<!-- ヘッダー：タイトル/ログイン導線 -->
-	<header th:replace="~{fragments/header :: siteHeader}"></header>
+	<header th:replace="~{fragments/header :: siteHeader('full')}"></header>
 	
 	<!-- メイン -->
 	<main class="page-grid">
@@ -223,7 +223,7 @@
 						<th:block th:if="${_csrf != null}">
 							<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 						</th:block>
-						<button type="submit" class="delete-btn">削除</button>	
+						<button type="submit" class="delete-btn" onclick="handleDelete(this)">削除</button>	
 					</form>
 				</div>
 			</div>

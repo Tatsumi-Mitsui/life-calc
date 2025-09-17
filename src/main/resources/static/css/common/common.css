@@ -3,15 +3,19 @@
 /* ===== トークン / ベース ===== */
 :root {
     /* カラー */
-    --brand: #339900;	/* ヘッダーの緑 */
+    --brand: #2aa14a;	/* ヘッダーの緑 */
+	--brand-600: #238b40;
+	--brand-200: #d9f0e2;
+	--brand-100: #eff9f2;
+	--header-fg: #fff;	/* 少し柔らかめの白 */
 	--ink: #222;
 	--muted: #666;
+	--accent-blue: #3b82f6;
 	--line: #e5e5e5;
 	--bg: #fafafa;
 	--white: #fff;
 	--negative: #ff0033;
 	--positive: #0033cc;	/* 計算結果の青 */
-	--header-fg: #f7fff7;	/* 少し柔らかめの白 */
 	
     /* フォント */
 	--font-sans-rounded: "Hiragino Maru Gothic ProN", "ヒラギノ丸ゴ ProN W4",
@@ -35,7 +39,7 @@
 
 	/* 基準サイズ */
 	--content-max: 1040px;	/* コンテンツ上限 */
-	--bp-stack: 1100px;		/* 切り替え閾値 */
+	--bp-stack: 1200px;		/* 切り替え閾値 */
 	--header-min: 56px;		/* モバイルでも44px超える安全圏 */
 	--header-max: 80px;		/* ややゆったり */
 }
@@ -77,7 +81,7 @@ header {
 }
 
 /* ヘッダー内部 */ 
-header .header-grid {
+header .inner.header-grid {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
@@ -134,11 +138,13 @@ header .logo a {
 	background: rgba(0, 0, 0, 0);		/* 透明なオーバーレイ */
 	transition: right 0.2s ease;
 	z-index: 2000;
+	pointer-events: none;				/* 閉時の背面操作：可能 */
 }
 
 .drawer.open {
 	width: 100%;						/* オーバーレイ有効化 */
 	background: rgba(0, 0, 0, 0.2);	/* 背景タップで閉じる */
+	pointer-events: auto;				/* 開時のみ操作可能 */
 }
 
 .drawer-content {
@@ -221,25 +227,18 @@ h2 {
 	vertical-align: middle;
 }
 
-/* 狭幅時の微調整（リンク折り返しはしない / 余白とサイズを少し詰める） */
+/* 狭幅時の微調整 */
 @media (max-width: 560px) {
 	header .inner.header-grid {
 		padding: 0 12px;
 		gap: 12px;
 	}
+}
 
-	header .right-area {
-		gap: 12px;
-	}
-
-	header .auth .auth-link,
-	header .auth .auth-user {
-		font-size: clamp(13px, 3.4vw, 16px);
-		padding: 6px 6px;
-	}
-
-	header .hamburger {
-		font-size: 26px;
-		padding: 6px;
+/* 1カラムに落とす閾値 */
+@media (max-width: 1100px) {
+	.page-grid {
+		grid-template-columns: 1fr;
+		gap: 24px;
 	}
 }

@@ -9,24 +9,35 @@ spring:
         activate:
             on-profile: dev
     datasource:
-        url: jdbc:postgresql://${DB_HOST:${LOCAL_DB_HOST:localhost}}:${DB_PORT:${LOCAL_DB_PORT:5432}}/${DB_NAME:${LOCAL_DB_NAME:life_calc}}
-        username: ${DB_USER:${LOCAL_DB_USER:life_user}}
-        password: ${DB_PASSWORD:${LOCAL_DB_PASSWORD:lifepass}}
+        url: jdbc:postgresql://${LOCAL_DB_HOST:localhost}:${LOCAL_DB_PORT:5432}/${LOCAL_DB_NAME:life_calc}
+        username: ${LOCAL_DB_USER:life_user}
+        password: ${LOCAL_DB_PASSWORD:lifepass}
         hikari:
             maximum-pool-size: 5
     jpa:
         open-in-view: false
         hibernate:
-            ddl-auto: update
+            ddl-auto: validate
         properties:
             hibernate:
                 jdbc:
-                    time_zone: Asia/Tokyo
+                    time_zone: UTC
                 format_sql: true
+    
+    jackson:
+        # API/JSON の時刻表示はJST
+        time_zone: Asia/Tokyo
+
     flyway:
         enabled: true
         locations: classpath:db/migration
         baseline-on-migrate: true
+
+logging:
+  level:
+    org.hibernate.SQL: info
+    org.hibernate.type.descriptor.sql.BasicBinder : warn
+
 
 ---
 # ===== PROD（Render） =====
@@ -34,13 +45,25 @@ spring:
     config:
         activate:
             on-profile: prod
+
     datasource:
         url: jdbc:postgresql://${DB_HOST_PROD}:${DB_PORT_PROD}/${DB_NAME}?sslmode=require
         username: ${DB_USER}
         password: ${DB_PASSWORD}
+
     jpa:
         hibernate:
             ddl-auto: validate
+        properties:
+            hibernate:
+                jdbc:
+                    time_zone: UTC
+                format_sql: false
+
+    jackson:
+        # 本番API/JSONもJSTで返す
+        time_zone: Asia/Tokyo
+
     flyway: 
       enabled: true
       locations: classpath:db/migration

@@ -5,8 +5,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.annotations.CreationTimestamp;
-
 /*
  * 履歴の親エンティティ（正規化：Entry 1 : N Item）
  * - 「ヘッダ情報」（合計・結果・保存日時など）を保持
@@ -26,12 +24,12 @@ public class HistoryEntry {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 将来のログイン導入用。未ログイン時は 0L などにマッピング可
+    // ログイン導入用。未ログイン時は 0L などにマッピング可
     @Column(nullable = false)
     private Long userId;
 
     // 収入
-    @Column(nullable = true)
+    @Column
     private Long income;
 
     // 固定費合計
@@ -43,12 +41,11 @@ public class HistoryEntry {
     private Long resultVariable;
 
     // 保存日時
-    @CreationTimestamp
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime savedAt;
 
     // 明細（行順は idx 昇順で保持）
-    @OneToMany(mappedBy = "entry", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "entry", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @OrderBy("idx ASC")
     private List<HistoryItem> items = new ArrayList<>();
 
@@ -56,6 +53,7 @@ public class HistoryEntry {
     @PrePersist
     public void onPrePersist() {
         if (userId == null) userId = 0L;    // 未ログイン時の暫定
+        if (savedAt == null) savedAt = LocalDateTime.now();
         if (fixedCostTotal == null) fixedCostTotal = 0L;
         if (resultVariable == null) resultVariable = 0L;
     }
@@ -64,16 +62,18 @@ public class HistoryEntry {
 
     // 双方向関連を持ちながら明細を追加（idx は呼び出し元で設定する運用でもOK）
     public void addItem(HistoryItem item) {
-        if (item == null) return;
-        item.setEntry(this);
-        items.add(item);
+        if (item != null) {
+            item.setEntry(this);
+            items.add(item);
+        }
     }
 
     // 既存の明細をクリアしてから、与えたリストを丸ごと設定
     public void replaceItems(List<HistoryItem> newItems) {
         items.clear();
-        if (newItems == null) return;
-        for (HistoryItem it : newItems) addItem(it);
+        if (newItems != null) {
+            for (HistoryItem it : newItems) addItem(it);
+        }
     }
 
     // ===== getter / setter =====

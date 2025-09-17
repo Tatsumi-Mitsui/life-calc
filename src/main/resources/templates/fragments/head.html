@@ -21,9 +21,6 @@
           crossorigin="anonymous"
           referrerpolicy="no-referrer" />
 
-    <!-- 共通JS -->
-    <script th:src="@{/js/common/menu.js(v=1)}" defer></script>
-
     <!-- ページ固有JS：extraJs が nullなら何も出さない -->
     <th:block th:each="src : ${extraJs}">
         <script th:src="${src + '?v=1'}" defer></script>

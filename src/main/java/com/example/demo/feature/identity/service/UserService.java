@@ -10,6 +10,8 @@ import com.example.demo.feature.identity.repository.RoleRepository;
 import com.example.demo.feature.identity.repository.UserRepository;
 import com.example.demo.feature.identity.web.model.SignupForm;
 
+import java.util.Collections;
+
 @Service
 public class UserService {
     
@@ -25,6 +27,10 @@ public class UserService {
 
     /*
      * 新規ユーザー登録
+     * - メール重複チェック
+     * - パスワードエンコード
+     * - ROLE_USER 付与
+     * 
      * @param displayName 表示名
      * @param email ログインID用のメールアドレス
      * @param rawPassword 平文パスワード
@@ -32,23 +38,24 @@ public class UserService {
      */
 
     @Transactional
-    public User register(SignupForm form) {
+    public void register(SignupForm form) {
         // 既に存在するかチェック
         if (userRepository.existsByEmail(form.getEmail())) {
-            throw new IllegalArgumentException("このメールアドレスは既に使われています");
+            throw new IllegalArgumentException("このメールアドレスは既に使われています" + form.getEmail());
         }
+        
+        User u = new User();
+        u.setEmail(form.getEmail());
+        u.setDisplayName(form.getDisplayName());
+        u.setPassword(passwordEncoder.encode(form.getPassword()));
 
         // "USER" を基本ロール名として採用（DBは素名、Security返却時に ROLE_ を付ける方針）
-        Role userRole = roleRepository.findByName("USER")
-                .orElseThrow(() -> new IllegalStateException("ロール 'USER' が未作成"));
-
-        User user = new User();
-        user.setEmail(form.getEmail());
-        user.setPassword(passwordEncoder.encode(form.getPassword()));
-        user.setDisplayName(form.getDisplayName());
-        user.setRole(userRole);
+        Role userRole = roleRepository.findByName("ROLE_USER")
+                .orElseThrow(() -> new IllegalStateException("ROLE_USER が見つかりません。初期データ投入を確認してください。"));
+        
+        u.setRoles(Collections.singleton(userRole));
 
         // DB保存
-        return userRepository.save(user);
+        userRepository.save(u);
     }
 }

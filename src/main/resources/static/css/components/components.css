@@ -31,17 +31,18 @@
 
 /* ===== ドロワー内：ユーザー情報カード ===== */
 .drawer-card {
-    border: 1px solid var(--line);
+    border: 1px solid #bfdbfe;
     border-radius: 12px;
     padding: 12px 14px;
-    background: var(--white);
+    background: var(--brand-100);
     display: grid;
     gap: 10px;
 }
 
 .drawer-card .card-title {
+    color: var(--ink);
     font-weight: 700;
-    font-size: var(--fs-md);
+    font-size: var(--fs-lg);
     margin-bottom: 2px;
 }
 
@@ -52,16 +53,22 @@
     gap: 12px;
 }
 
-.drawer-card .card-row .label {
-    color: var(--muted);
-    white-space: nowrap;
-}
-
 .drawer-card .card-row .value {
+    color: var(--muted);
     font-weight: 600;
     text-align: right;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.drawer-card .user-info {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.drawer-card .user-info .value {
+    font-weight: 600;
+    font-size: var(--fs-md);
 }
 
 .drawer-card .card-actions {
@@ -70,18 +77,21 @@
     margin-top: 4px;
 }
 
-.drawer-card .btn-logout {
-    display: inline-block;
-    text-decoration: none;
-    color: var(--white);
-    background: #ef4444;
-    padding: 8px 12px;
-    border-radius: 10px;
-    font-weight: 700;
+/* ログアウト：ボタンをリンク風に */
+.drawer-link.as-text {
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    font: inherit;
+    color: var(--ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
 }
 
-.drawer-card .btn-logout:hover {
-    filter: brightness(0.95);
+.drawer-link.as-text:hover {
+    filter: none;
+    text-decoration-thickness: 2px;
 }
 
 /* ドロワー内：セクション見出しとリンク群 */
@@ -105,8 +115,9 @@
     background: #f4f6f8;
 }
 
-/* 既存ドロワーのレイアウトを少しゆったり */
+/* 既存ドロワーからの変更 */
 .drawer .drawer-content {
+    color: var(--ink);
     gap: 12px;
     padding: 16px;
 }

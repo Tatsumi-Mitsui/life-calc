@@ -137,6 +137,34 @@
         saveForm.submit();
     }
 
+    // ----- 履歴：「削除ボタン」 -----
+    function handleDelete(btn) {
+        const deleteForm = btn.closest('form');
+        if (!deleteForm || !calcForm) return;
+
+        // 以前のコピーを削除（CSRF hiddenは残す）
+        $$('.__cloned', deleteForm).forEach(n => n.remove());
+
+        // calc-form の name を持つ要素を収集
+        const fields = $$('input[name], select[name], textarea[name]', calcForm);
+
+        fields.forEach(src => {
+            if (src.disabled) return;
+            if ((src.type === 'checkbox' || src.type === 'radio') && !src.checked) return;
+            if (/^fixedCosts\[d+\]$/.test(src.name) && (src.value === '' || src.value == null)) return;
+
+            const hidden = document.createElement('input');
+            hidden.type = 'hidden';
+            hidden.name = src.name;
+            hidden.value = src.value;
+            hidden.className = '__cloned';
+            deleteForm.appendChild(hidden);
+        });
+
+        deleteForm.submit();
+    }
+
+
     // ----- イベント束ね -----
     let calcSubmitting = false;
     function bindEvents() {
@@ -158,6 +186,7 @@
 
         // 動的行の削除用に window へ公開（テンプレの onclick がこれを呼ぶ）
         window.removeCost = removeCost;
+        window.handleDelete = handleDelete;
     }
 
     document.addEventListener('DOMContentLoaded', bindEvents);

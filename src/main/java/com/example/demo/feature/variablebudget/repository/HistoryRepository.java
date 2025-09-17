@@ -2,7 +2,7 @@ package com.example.demo.feature.variablebudget.repository;
 
 import java.util.List;
 
-import com.example.demo.feature.variablebudget.web.dto.HistoryView;
+import com.example.demo.feature.variablebudget.dto.HistoryView;
 
 /*
  * 履歴データのリポジトリインターフェース

@@ -107,7 +107,7 @@
     align-items: flex-end;
     margin: 4px 0 12px;
     padding-bottom: 8px;
-    border-bottom: 1px solid var(--line);
+    border-bottom: 1px solid var(--brand-200);
 }
 
 .csv-placeholder {

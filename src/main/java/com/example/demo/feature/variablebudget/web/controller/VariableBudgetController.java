@@ -1,8 +1,7 @@
 package com.example.demo.feature.variablebudget.web.controller;
 
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-
-import java.util.Collections;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,9 +9,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.example.demo.core.context.UserContextService;
 import com.example.demo.feature.variablebudget.service.CalcService;
 import com.example.demo.feature.variablebudget.service.HistoryAppService;
 import com.example.demo.feature.variablebudget.web.model.VariableBudgetForm;
+import org.springframework.web.bind.annotation.GetMapping;
 
 /*
  * 画面用コントローラ（最小）
@@ -35,44 +36,55 @@ public class VariableBudgetController {
 
     private final CalcService calcService;
     private final HistoryAppService historyService;
+    private final UserContextService userContextService;
+    private final HttpSession session;
 
     public VariableBudgetController(CalcService calcService,
-                                    HistoryAppService historyService) {
+                                    HistoryAppService historyService,
+                                    UserContextService userContextService,
+                                    HttpSession session) {
         this.calcService = calcService;
         this.historyService = historyService;
+        this.userContextService = userContextService;
+        this.session = session;
     }
 
-    // 初期表示：Flash Attribute の formがあればそれを使う。なければ空フォームを作る。
     @GetMapping
-    public String show(@ModelAttribute("form") VariableBudgetForm form, Model model) {
-        // 初回（Flushがない）だけ新規フォームをセット
-        if (!model.containsAttribute("form")) {
-            form = new VariableBudgetForm();
-            model.addAttribute("form", form);
+    public String show(Model model) {
+        Long userId = userContextService.resolveUserId(session);
+        System.out.println("Controller sees userID = " + userId);
+
+        // userId を直接渡す
+        model.addAttribute("userId", userId);
+
+        // form の初期化（FlashAttribute から来ている場合は再利用）
+        VariableBudgetForm form = (model.getAttribute("form") instanceof VariableBudgetForm f)
+            ? f 
+            : new VariableBudgetForm();
+
+        form.setUserId(userId);
+        model.addAttribute("form", form);
+
+        // 履歴の初期表示（FlashAttribute にhistories がなければ取得）
+        if (!model.containsAttribute("histories")) {
+            model.addAttribute("histories",historyService.recentByUser(userId, 5));
         }
 
-        try {
-            Long uid = form.getUserId();
-            if (uid != null) {
-                model.addAttribute("histories", historyService.recentByUser(uid, 5));
-            } else {
-                model.addAttribute("histories", Collections.emptyList());
-            }
-        } catch (Exception ex) {
-            // ここに来た場合 service 側で未ログイン → 例外 → リダイレクト系の動きが濃厚
-            model.addAttribute("histories", Collections.emptyList());
-        }
-        return "variablebudget/variableBudget";
+        return "variablebudget/variablebudget";
     }
 
     // 計算だけ実行：保存はしない。結果を画面に反映。
     @PostMapping("/calc")
     public String calc(@Valid @ModelAttribute("form") VariableBudgetForm form, BindingResult br, Model model) {
+        form.setUserId(userContextService.resolveUserId(session));
         if (!br.hasErrors()) {
             calcService.fillTotals(form);  // 収入・固定費から「固定費合計 / 使える変動費」を算出
         }
+
+        // 履歴を再取得して表示
         model.addAttribute("histories", historyService.recentByUser(form.getUserId(), 5));
-        return "variablebudget/variableBudget";
+
+        return "variablebudget/variablebudget";
     }
 
     /*
@@ -84,10 +96,11 @@ public class VariableBudgetController {
                         BindingResult br,
                         RedirectAttributes ra,
                         Model model) {
+        form.setUserId(userContextService.resolveUserId(session));
         if (br.hasErrors()) {
             // バリデーション NG はそのまま再描画（エラー表示のためリダイレクトしない）
             model.addAttribute("histories", historyService.recentByUser(form.getUserId(), 5));
-            return "variablebudget/variableBudget";
+            return "variablebudget/variablebudget";
         }
 
         // ここで再計算してから保存（サービス側でも二重防御）
@@ -96,6 +109,7 @@ public class VariableBudgetController {
 
         // 入力値をリダイレクト先へ引き継ぎ（画面に残す）
         ra.addFlashAttribute("form", form);
+        ra.addFlashAttribute("histories", historyService.recentByUser(form.getUserId(), 5));
         return "redirect:/variablebudget";
     }
 
@@ -104,6 +118,7 @@ public class VariableBudgetController {
     public String delete(@PathVariable("id") Long id,
                          @ModelAttribute("form") VariableBudgetForm form,
                          RedirectAttributes ra) {
+        form.setUserId(userContextService.resolveUserId(session));
         historyService.deleteById(form.getUserId(), id);
 
         // 入力値はそのままにして一覧だけ表示したいので form を持ち越す

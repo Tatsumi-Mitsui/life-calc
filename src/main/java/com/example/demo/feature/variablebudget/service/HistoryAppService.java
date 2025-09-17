@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.demo.feature.variablebudget.dto.HistoryView;
 import com.example.demo.feature.variablebudget.repository.HistoryRepository;
-import com.example.demo.feature.variablebudget.web.dto.HistoryView;
 import com.example.demo.feature.variablebudget.web.model.VariableBudgetForm;
 
 import java.time.LocalDateTime;
@@ -53,6 +53,7 @@ public class HistoryAppService {
     // 現在の入力を再計算してから、履歴として保存。戻り値は保存ID。
     @Transactional
     public Long saveSnapshot(VariableBudgetForm form) {
+        
         // 入力から固定費合計/使える変動費を再計算して確定
         calcService.fillTotals(form);
 
