@@ -1,6 +1,6 @@
 package com.example.demo.feature.variablebudget.dto;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 /*
@@ -22,7 +22,7 @@ import java.util.List;
 public class HistoryView {
 
         private Long id;                    // 履歴ID
-        private LocalDateTime savedAt;      // 保存日時
+        private OffsetDateTime savedAt;      // 保存日時
         private Long userId;                // ユーザーID（未ログインはnull想定→repo側で0扱いでもOK）
         private Long income;                // 収入
         private List<Long> fixedCosts;      // 固定費明細（行順を維持した金額のリスト）
@@ -30,7 +30,7 @@ public class HistoryView {
         private Long resultVariable;        // 使える変動費
 
         public HistoryView(Long id,
-                           LocalDateTime savedAt,
+                           OffsetDateTime savedAt,
                            Long userId,
                            Long income,
                            List<Long> fixedCosts,
@@ -48,7 +48,7 @@ public class HistoryView {
 
         // ===== getter =====
         public Long getId(){ return id; }
-        public LocalDateTime getSavedAt() { return savedAt; }
+        public OffsetDateTime getSavedAt() { return savedAt; }
         public Long getUserId() { return userId; }
         public Long getIncome() { return income; }
         public List<Long> getFixedCosts() { return fixedCosts; }
@@ -57,7 +57,7 @@ public class HistoryView {
 
         // ===== setter =====
         public void setId(Long id) { this.id = id; }
-        public void setSavedAt(LocalDateTime savedAt) { this.savedAt = savedAt; }
+        public void setSavedAt(OffsetDateTime savedAt) { this.savedAt = savedAt; }
         public void setUserId(Long userId) { this.userId = userId; }
         public void setIncome(Long income) { this.income = income; }
         public void setFixedCosts(List<Long> fixedCosts) { this.fixedCosts = fixedCosts; }

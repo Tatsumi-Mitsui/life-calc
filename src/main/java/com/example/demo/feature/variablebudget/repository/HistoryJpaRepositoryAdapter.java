@@ -34,7 +34,6 @@ public class HistoryJpaRepositoryAdapter implements HistoryRepository {
         e.setIncome(nz(v.getIncome()));
         e.setFixedCostTotal(nz(v.getFixedCostTotal()));
         e.setResultVariable(nz(v.getResultVariable()));
-        e.setSavedAt(v.getSavedAt());
 
         // 明細をぶら下げ
         List<Long> fixeds = (v.getFixedCosts() == null) ? List.of() : v.getFixedCosts();

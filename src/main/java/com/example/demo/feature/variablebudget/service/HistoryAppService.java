@@ -8,7 +8,7 @@ import com.example.demo.feature.variablebudget.dto.HistoryView;
 import com.example.demo.feature.variablebudget.repository.HistoryRepository;
 import com.example.demo.feature.variablebudget.web.model.VariableBudgetForm;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 /*
@@ -64,7 +64,7 @@ public class HistoryAppService {
 
         HistoryView snapshot = new HistoryView(
                 null,                           // id は repo 側で採番
-                LocalDateTime.now(),            // 保存日時
+                OffsetDateTime.now(),            // 保存日時
                 form.getUserId(),               // 将来ログイン導入で差し替え
                 form.getIncome(),
                 fixedListCopy,

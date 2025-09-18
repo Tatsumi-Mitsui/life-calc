@@ -1,7 +1,7 @@
 package com.example.demo.feature.variablebudget.entity;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,8 +41,8 @@ public class HistoryEntry {
     private Long resultVariable;
 
     // 保存日時
-    @Column(nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    private LocalDateTime savedAt;
+    @Column(name = "saved_at", nullable = false, updatable = false)
+    private OffsetDateTime savedAt;
 
     // 明細（行順は idx 昇順で保持）
     @OneToMany(mappedBy = "entry", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
@@ -53,7 +53,6 @@ public class HistoryEntry {
     @PrePersist
     public void onPrePersist() {
         if (userId == null) userId = 0L;    // 未ログイン時の暫定
-        if (savedAt == null) savedAt = LocalDateTime.now();
         if (fixedCostTotal == null) fixedCostTotal = 0L;
         if (resultVariable == null) resultVariable = 0L;
     }
@@ -93,8 +92,8 @@ public class HistoryEntry {
     public Long getResultVariable() { return resultVariable; }
     public void setResultVariable(Long resultVariable) { this.resultVariable = resultVariable; }
     
-    public LocalDateTime getSavedAt() { return savedAt; }
-    public void setSavedAt(LocalDateTime savedAt) { this.savedAt = savedAt; }
+    public OffsetDateTime getSavedAt() { return savedAt; }
+    public void setSavedAt(OffsetDateTime savedAt) { this.savedAt = savedAt; }
     
     public List<HistoryItem> getItems() { return items; }
     public void setItems(List<HistoryItem> items) { this.items = (items == null) ? new ArrayList<>() : items; }
