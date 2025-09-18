@@ -1,3 +1,8 @@
+spring: 
+    profiles:
+        default: dev
+
+---
 # ===== DEV（ローカル） =====
 spring:
     config:
